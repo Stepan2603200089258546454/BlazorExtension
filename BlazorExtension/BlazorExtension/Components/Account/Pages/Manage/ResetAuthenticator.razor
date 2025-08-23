@@ -1,0 +1,52 @@
+﻿@page "/Account/Manage/ResetAuthenticator"
+
+@using DataContext.IdentityModels
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject IdentityUserAccessor UserAccessor
+@inject IdentityRedirectManager RedirectManager
+@inject ILogger<ResetAuthenticator> Logger
+
+<PageTitle>Сброс ключа аутентификатора</PageTitle>
+
+<StatusMessage />
+<h3>Сброс ключа аутентификатора</h3>
+<div class="alert alert-warning" role="alert">
+    <p>
+        <span class="glyphicon glyphicon-warning-sign"></span>
+        <strong>Если вы сбросите ключ аутентификации, ваше приложение аутентификации не будет работать, пока вы не перенастроите его.</strong>
+    </p>
+    <p>
+        Этот процесс отключает двухфакторную аутентификацию (2FA) до тех пор, пока вы не подтвердите своё приложение-аутентификатор.
+        Если вы не завершите настройку приложения-аутентификатора, вы можете потерять доступ к своей учётной записи.
+    </p>
+</div>
+<div>
+    <form @formname="reset-authenticator" @onsubmit="OnSubmitAsync" method="post">
+        <AntiforgeryToken />
+        <button class="btn btn-danger" type="submit">Сброс ключа аутентификатора</button>
+    </form>
+</div>
+
+@code {
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    private async Task OnSubmitAsync()
+    {
+        var user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        await UserManager.SetTwoFactorEnabledAsync(user, false);
+        await UserManager.ResetAuthenticatorKeyAsync(user);
+        var userId = await UserManager.GetUserIdAsync(user);
+        Logger.LogInformation("Пользователь с идентификатором '{UserId}' сбросил свой ключ приложения аутентификации.", userId);
+
+        await SignInManager.RefreshSignInAsync(user);
+
+        RedirectManager.RedirectToWithStatus(
+            "Account/Manage/EnableAuthenticator",
+            "Ваш ключ приложения аутентификации был сброшен, вам необходимо настроить приложение аутентификации, используя новый ключ.",
+            HttpContext);
+    }
+}

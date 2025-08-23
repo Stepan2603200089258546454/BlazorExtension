@@ -1,0 +1,204 @@
+﻿@page "/Account/ExternalLogin"
+
+@using System.ComponentModel.DataAnnotations
+@using System.Security.Claims
+@using System.Text
+@using System.Text.Encodings.Web
+@using DataContext.IdentityModels
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject IUserStore<ApplicationUser> UserStore
+@inject IEmailSender<ApplicationUser> EmailSender
+@inject NavigationManager NavigationManager
+@inject IdentityRedirectManager RedirectManager
+@inject ILogger<ExternalLogin> Logger
+
+<PageTitle>Зарегистрироваться</PageTitle>
+
+<StatusMessage Message="@message" />
+<h1>Зарегистрироваться</h1>
+<h2>Свяжите свою учетную запись @ProviderDisplayName.</h2>
+<hr />
+
+<div  class="alert alert-info">
+    Вы успешно прошли аутентификацию с помощью <strong>@ProviderDisplayName</strong>.
+    Введите адрес электронной почты для этого сайта ниже и нажмите кнопку «Зарегистрироваться», чтобы завершить вход.
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <EditForm Model="Input" OnValidSubmit="OnValidSubmitAsync" FormName="confirmation" method="post">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="email" placeholder="Пожалуйста, введите свой адрес электронной почты." />
+                <label for="Input.Email" class="form-label">Электронная почта</label>
+                <ValidationMessage For="() => Input.Email" />
+            </div>
+            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    public const string LoginCallbackAction = "LoginCallback";
+
+    private string? message;
+    private ExternalLoginInfo? externalLoginInfo;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? RemoteError { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string? Action { get; set; }
+
+    private string? ProviderDisplayName => externalLoginInfo?.ProviderDisplayName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (RemoteError is not null)
+        {
+            RedirectManager.RedirectToWithStatus("Account/Login", $"Ошибка внешнего поставщика: {RemoteError}", HttpContext);
+        }
+
+        var info = await SignInManager.GetExternalLoginInfoAsync();
+        if (info is null)
+        {
+            RedirectManager.RedirectToWithStatus("Account/Login", "Ошибка загрузки внешней информации для входа.", HttpContext);
+        }
+
+        externalLoginInfo = info;
+
+        if (HttpMethods.IsGet(HttpContext.Request.Method))
+        {
+            if (Action == LoginCallbackAction)
+            {
+                await OnLoginCallbackAsync();
+                return;
+            }
+
+            // Мы должны попасть на эту страницу только через обратный вызов входа, поэтому перенаправляем обратно на
+            // страницу входа, если мы попадём сюда другим путём.
+            RedirectManager.RedirectTo("Account/Login");
+        }
+    }
+
+    private async Task OnLoginCallbackAsync()
+    {
+        if (externalLoginInfo is null)
+        {
+            RedirectManager.RedirectToWithStatus("Account/Login", "Ошибка загрузки внешней информации для входа.", HttpContext);
+        }
+
+        // Авторизуйте пользователя с помощью этого внешнего поставщика входа, если у пользователя уже есть вход.
+        var result = await SignInManager.ExternalLoginSignInAsync(
+            externalLoginInfo.LoginProvider,
+            externalLoginInfo.ProviderKey,
+            isPersistent: false,
+            bypassTwoFactor: true);
+
+        if (result.Succeeded)
+        {
+            Logger.LogInformation(
+                "{Name} выполнил вход через провайдера {LoginProvider}.",
+                externalLoginInfo.Principal.Identity?.Name,
+                externalLoginInfo.LoginProvider);
+            RedirectManager.RedirectTo(ReturnUrl);
+        }
+        else if (result.IsLockedOut)
+        {
+            RedirectManager.RedirectTo("Account/Lockout");
+        }
+
+        // Если у пользователя нет учетной записи, попросим пользователя создать учетную запись.
+        if (externalLoginInfo.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
+        {
+            Input.Email = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email) ?? "";
+        }
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        if (externalLoginInfo is null)
+        {
+            RedirectManager.RedirectToWithStatus("Account/Login", "Ошибка загрузки внешней информации для входа во время подтверждения.", HttpContext);
+        }
+
+        var emailStore = GetEmailStore();
+        var user = CreateUser();
+
+        await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+        await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+        var result = await UserManager.CreateAsync(user);
+        if (result.Succeeded)
+        {
+            result = await UserManager.AddLoginAsync(user, externalLoginInfo);
+            if (result.Succeeded)
+            {
+                Logger.LogInformation("Пользователь создал учетную запись, используя провайдера {Name}.", externalLoginInfo.LoginProvider);
+
+                var userId = await UserManager.GetUserIdAsync(user);
+                var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+                var callbackUrl = NavigationManager.GetUriWithQueryParameters(
+                    NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
+                    new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code });
+                await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
+
+                // Если требуется подтверждение учетной записи, нам нужно показать ссылку, если у нас нет реального отправителя электронной почты
+                if (UserManager.Options.SignIn.RequireConfirmedAccount)
+                {
+                    RedirectManager.RedirectTo("Account/RegisterConfirmation", new() { ["email"] = Input.Email });
+                }
+
+                await SignInManager.SignInAsync(user, isPersistent: false, externalLoginInfo.LoginProvider);
+                RedirectManager.RedirectTo(ReturnUrl);
+            }
+        }
+
+        message = $"Ошибка: {string.Join(",", result.Errors.Select(error => error.Description))}";
+    }
+
+    private ApplicationUser CreateUser()
+    {
+        try
+        {
+            return Activator.CreateInstance<ApplicationUser>();
+        }
+        catch
+        {
+            throw new InvalidOperationException($"Невозможно создать экземпляр '{nameof(ApplicationUser)}'. " +
+                $"Убедитесь, что '{nameof(ApplicationUser)}' не является абстрактным классом и имеет конструктор без параметров");
+        }
+    }
+
+    private IUserEmailStore<ApplicationUser> GetEmailStore()
+    {
+        if (!UserManager.SupportsUserEmail)
+        {
+            throw new NotSupportedException("Пользовательский интерфейс по умолчанию требует наличия хранилища пользователей с поддержкой по электронной почте.");
+        }
+        return (IUserEmailStore<ApplicationUser>)UserStore;
+    }
+
+    private sealed class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = "";
+    }
+}

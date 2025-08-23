@@ -1,0 +1,68 @@
+﻿@page "/Account/RegisterConfirmation"
+
+@using System.Text
+@using DataContext.IdentityModels
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+
+@inject UserManager<ApplicationUser> UserManager
+@inject IEmailSender<ApplicationUser> EmailSender
+@inject NavigationManager NavigationManager
+@inject IdentityRedirectManager RedirectManager
+
+<PageTitle>Подтверждение регистрации</PageTitle>
+
+<h1>Подтверждение регистрации</h1>
+
+<StatusMessage Message="@statusMessage" />
+
+@if (emailConfirmationLink is not null)
+{
+    <p>
+        В настоящее время в этом приложении не зарегистрирован реальный отправитель электронной почты. Подробнее о настройке реального отправителя электронной почты см. в <a href="https://aka.ms/aspaccountconf">этих документах</a>.
+        Обычно это письмо отправляется по адресу: <a href="@emailConfirmationLink">Нажмите здесь, чтобы подтвердить свою учётную запись</a>
+    </p>
+}
+else
+{
+    <p role="alert">Пожалуйста, проверьте свою электронную почту, чтобы подтвердить свою учетную запись.</p>
+}
+
+@code {
+    private string? emailConfirmationLink;
+    private string? statusMessage;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromQuery]
+    private string? Email { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Email is null)
+        {
+            RedirectManager.RedirectTo("");
+        }
+
+        var user = await UserManager.FindByEmailAsync(Email);
+        if (user is null)
+        {
+            HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+            statusMessage = "Ошибка поиска пользователя по неизвестному адресу электронной почты";
+        }
+        else if (EmailSender is IdentityNoOpEmailSender)
+        {
+            // После добавления настоящего отправителя электронной почты вам следует удалить этот код, позволяющий подтвердить учетную запись.
+            var userId = await UserManager.GetUserIdAsync(user);
+            var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            emailConfirmationLink = NavigationManager.GetUriWithQueryParameters(
+                NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
+                new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
+        }
+    }
+}
