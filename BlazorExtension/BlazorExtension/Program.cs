@@ -1,6 +1,6 @@
 using BlazorExtension.Client.Pages;
 using BlazorExtension.Components;
-using BlazorExtension.Components.Account;
+using BlazorExtension.Components.Layout;
 using DataContext;
 using DataContext.DataContext;
 using DataContext.IdentityModels;
@@ -22,17 +22,12 @@ builder.Services.AddRazorComponents()
 // регистрируем возможность управления контроллерами для web-api
 builder.Services.AddControllers(); //api
 
-builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<IdentityUserAccessor>();
-builder.Services.AddScoped<IdentityRedirectManager>();
-builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-
 // регистрация HttpClient для WASM
 builder.Services.AddHttpClient();
 
 builder.AddDataBase();
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
 
 //MS openAPI
 builder.Services.AddOpenApi();
@@ -89,9 +84,13 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(BlazorExtension.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(
+        typeof(BlazorExtension.Client._Imports).Assembly,
+        // подключение библиотеки страниц Identity
+        typeof(IdentityComponents._Imports).Assembly
+    );
 
-app.MapAdditionalIdentityEndpoints();
+app.AddIdentityEndpoints();
 
 app.MapControllers(); //api
 app.MapControllerRoute(

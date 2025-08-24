@@ -1,7 +1,11 @@
 ﻿using DataContext.DataContext;
+using DataContext.IdentityExstension;
 using DataContext.IdentityModels;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,8 +25,8 @@ namespace DataContext
             // Миграции EF Core
             using (var scope = host.Services.CreateScope())
             {
-                var dbContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
-                using (var dbContext = await dbContextFactory.CreateDbContextAsync())
+                IDbContextFactory<ApplicationDbContext> dbContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
+                using (ApplicationDbContext dbContext = await dbContextFactory.CreateDbContextAsync())
                 {
                     if ((await dbContext.Database.GetPendingMigrationsAsync())?.Any() == true) //проверяем нужны ли миграции
                         dbContext.Database.Migrate(); //Пытаемся актуализировать и принять миграции при старте приложения
@@ -30,8 +34,20 @@ namespace DataContext
             }
         }
 
+        public static void AddIdentityEndpoints(this IEndpointRouteBuilder host)
+        {
+            host.MapAdditionalIdentityEndpoints();
+        }
+
         public static void AddDataBase(this IHostApplicationBuilder builder)
         {
+            builder.Services.AddCascadingAuthenticationState();
+            builder.Services.AddScoped<IdentityUserAccessor>();
+            builder.Services.AddScoped<IdentityRedirectManager>();
+            builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+            builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultScheme = IdentityConstants.ApplicationScheme;
@@ -54,9 +70,5 @@ namespace DataContext
                 .AddSignInManager()
                 .AddDefaultTokenProviders();
         }
-        //public static void AddDataBase(this IServiceCollection services)
-        //{
-
-        //}
     }
 }

@@ -1,0 +1,61 @@
+﻿@page "/Account/Manage/Disable2fa"
+
+@inject UserManager<ApplicationUser> UserManager
+@inject IdentityUserAccessor UserAccessor
+@inject IdentityRedirectManager RedirectManager
+@inject ILogger<Disable2fa> Logger
+
+<PageTitle>Отключить двухфакторную аутентификацию (2FA)</PageTitle>
+
+<StatusMessage />
+<h3>Отключить двухфакторную аутентификацию (2FA)</h3>
+
+<div class="alert alert-warning" role="alert">
+    <p>
+        <strong>Это действие отключает только 2FA..</strong>
+    </p>
+    <p>
+        Отключение двухфакторной аутентификации не меняет ключи, используемые в приложениях аутентификации. Если вы хотите изменить ключ,
+        используемый в приложении аутентификации, вам следует <a href="Account/Manage/ResetAuthenticator">сбросить ключи аутентификации</a>.
+    </p>
+</div>
+
+<div>
+    <form @formname="disable-2fa" @onsubmit="OnSubmitAsync" method="post">
+        <AntiforgeryToken />
+        <button class="btn btn-danger" type="submit">Отключить 2FA</button>
+    </form>
+</div>
+
+@code {
+    private ApplicationUser user = default!;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+
+        if (HttpMethods.IsGet(HttpContext.Request.Method) && !await UserManager.GetTwoFactorEnabledAsync(user))
+        {
+            throw new InvalidOperationException("Невозможно отключить 2FA для пользователя, так как в данный момент она не включена.");
+        }
+    }
+
+    private async Task OnSubmitAsync()
+    {
+        var disable2faResult = await UserManager.SetTwoFactorEnabledAsync(user, false);
+        if (!disable2faResult.Succeeded)
+        {
+            throw new InvalidOperationException("Произошла непредвиденная ошибка при отключении 2FA..");
+        }
+
+        var userId = await UserManager.GetUserIdAsync(user);
+        Logger.LogInformation("Пользователь с идентификатором '{UserId}' отключил 2FA.", userId);
+        RedirectManager.RedirectToWithStatus(
+            "Account/Manage/TwoFactorAuthentication",
+            "Двухфакторная аутентификация отключена. Вы можете включить её снова при настройке приложения-аутентификатора.",
+            HttpContext);
+    }
+}
