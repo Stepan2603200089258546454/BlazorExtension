@@ -1,15 +1,12 @@
 ﻿@page "/Account/RegisterConfirmation"
 
-@inject UserManager<ApplicationUser> UserManager
-@inject IEmailSender<ApplicationUser> EmailSender
-@inject NavigationManager NavigationManager
-@inject IdentityRedirectManager RedirectManager
+@inject IUserManager UserManager
 
 <PageTitle>Подтверждение регистрации</PageTitle>
 
 <h1>Подтверждение регистрации</h1>
 
-<StatusMessage Message="@statusMessage" />
+<StatusMessage Message="@UserManager.Message" />
 
 @if (emailConfirmationLink is not null)
 {
@@ -25,7 +22,6 @@ else
 
 @code {
     private string? emailConfirmationLink;
-    private string? statusMessage;
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
@@ -38,26 +34,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if (Email is null)
-        {
-            RedirectManager.RedirectTo("");
-        }
-
-        var user = await UserManager.FindByEmailAsync(Email);
-        if (user is null)
-        {
-            HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-            statusMessage = "Ошибка поиска пользователя по неизвестному адресу электронной почты";
-        }
-        else if (EmailSender is IdentityNoOpEmailSender)
-        {
-            // После добавления настоящего отправителя электронной почты вам следует удалить этот код, позволяющий подтвердить учетную запись.
-            var userId = await UserManager.GetUserIdAsync(user);
-            var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            emailConfirmationLink = NavigationManager.GetUriWithQueryParameters(
-                NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
-                new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
-        }
+        emailConfirmationLink = await UserManager.RegisterConfirmationPageAsync(HttpContext, Email, ReturnUrl);
     }
 }

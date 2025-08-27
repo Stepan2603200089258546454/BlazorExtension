@@ -1,6 +1,8 @@
 ﻿using DataContext.DataContext;
-using DataContext.IdentityExstension;
-using DataContext.IdentityModels;
+using DataContext.IdentityExtensions;
+using DataContext.IdentityServices;
+using IdentityAbstractions.Interfaces;
+using IdentityAbstractions.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -43,8 +45,9 @@ namespace DataContext
         {
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddScoped<IdentityUserAccessor>();
-            builder.Services.AddScoped<IdentityRedirectManager>();
+            builder.Services.AddScoped<IIdentityRedirectManager, IdentityRedirectManager>();
             builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+            builder.Services.AddScoped<IUserManager, IdentityUserManager>();
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 

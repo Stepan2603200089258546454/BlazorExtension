@@ -1,4 +1,4 @@
-﻿using DataContext.IdentityModels;
+﻿using IdentityAbstractions.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
-namespace DataContext.IdentityExstension
+namespace DataContext.IdentityExtensions
 {
     // Это серверный AuthenticationStateProvider, который повторно проверяет отметку безопасности для подключенного пользователя.
     // каждые 30 минут подключается интерактивный канал.

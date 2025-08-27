@@ -1,9 +1,6 @@
 ﻿@page "/Account/Login"
 
-@inject SignInManager<ApplicationUser> SignInManager
-@inject ILogger<Login> Logger
-@inject NavigationManager NavigationManager
-@inject IdentityRedirectManager RedirectManager
+@inject IUserManager UserManager
 
 <PageTitle>Авторизоваться</PageTitle>
 
@@ -11,7 +8,8 @@
 <div class="row">
     <div class="col-lg-6">
         <section>
-            <StatusMessage Message="@errorMessage" />
+            <StatusMessage Message="@UserManager.Message" />
+
             <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
                 <DataAnnotationsValidator />
                 <h2>Для входа используйте локальную учетную запись.</h2>
@@ -43,7 +41,7 @@
                         <a href="Account/ForgotPassword">Забыли пароль?</a>
                     </p>
                     <p>
-                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">
+                        <a href="@UserManager.GetUrlAccountRegister(ReturnUrl)">
                             Зарегистрируйтесь как новый пользователь
                         </a>
                     </p>
@@ -64,64 +62,22 @@
 </div>
 
 @code {
-    private string? errorMessage;
-
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private LoginInputModel Input { get; set; } = new();
 
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if (HttpMethods.IsGet(HttpContext.Request.Method))
-        {
-            // Очистите существующий внешний cookie-файл, чтобы обеспечить чистый процесс входа в систему
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-        }
+        await UserManager.IsGetSignOutAsync(HttpContext);
     }
 
     public async Task LoginUser()
     {
-        // Это не учитывает неудачные попытки входа в систему при блокировке учётной записи.
-        // Чтобы разрешить блокировку учётной записи при неудачном вводе пароля, установите lockoutOnFailure: true.
-        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-        if (result.Succeeded)
-        {
-            Logger.LogInformation("Пользователь вошел в систему.");
-            RedirectManager.RedirectTo(ReturnUrl);
-        }
-        else if (result.RequiresTwoFactor)
-        {
-            RedirectManager.RedirectTo(
-                "Account/LoginWith2fa",
-                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
-        }
-        else if (result.IsLockedOut)
-        {
-            Logger.LogWarning("Учетная запись пользователя заблокирована.");
-            RedirectManager.RedirectTo("Account/Lockout");
-        }
-        else
-        {
-            errorMessage = "Ошибка: неверная попытка входа.";
-        }
-    }
-
-    private sealed class InputModel
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = "";
-
-        [Required]
-        [DataType(DataType.Password)]
-        public string Password { get; set; } = "";
-
-        [Display(Name = "Запомнить меня?")]
-        public bool RememberMe { get; set; }
+        await UserManager.LoginUser(Input, ReturnUrl);
     }
 }

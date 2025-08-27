@@ -1,16 +1,13 @@
 ﻿@page "/Account/ResendEmailConfirmation"
 
-@inject UserManager<ApplicationUser> UserManager
-@inject IEmailSender<ApplicationUser> EmailSender
-@inject NavigationManager NavigationManager
-@inject IdentityRedirectManager RedirectManager
+@inject IUserManager UserManager
 
 <PageTitle>Повторно отправить подтверждение по электронной почте</PageTitle>
 
 <h1>Повторно отправить подтверждение по электронной почте</h1>
 <h2>Введите свой адрес электронной почты.</h2>
 <hr />
-<StatusMessage Message="@message" />
+<StatusMessage Message="@UserManager.Message" />
 <div class="row">
     <div class="col-md-4">
         <EditForm Model="Input" FormName="resend-email-confirmation" OnValidSubmit="OnValidSubmitAsync" method="post">
@@ -27,35 +24,11 @@
 </div>
 
 @code {
-    private string? message;
-
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private EmailInputModel Input { get; set; } = new();
 
     private async Task OnValidSubmitAsync()
     {
-        var user = await UserManager.FindByEmailAsync(Input.Email!);
-        if (user is null)
-        {
-            message = "Письмо с подтверждением отправлено. Проверьте почту.";
-            return;
-        }
-
-        var userId = await UserManager.GetUserIdAsync(user);
-        var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var callbackUrl = NavigationManager.GetUriWithQueryParameters(
-            NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
-            new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code });
-        await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
-
-        message = "Письмо с подтверждением отправлено. Проверьте почту.";
-    }
-
-    private sealed class InputModel
-    {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = "";
+        await UserManager.OnResendEmailConfirmationValidSubmitAsync(Input);
     }
 }

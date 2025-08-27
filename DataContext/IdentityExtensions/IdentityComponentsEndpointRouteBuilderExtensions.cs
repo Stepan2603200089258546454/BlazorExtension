@@ -1,4 +1,4 @@
-﻿using DataContext.IdentityModels;
+﻿using IdentityAbstractions.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -14,7 +14,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text.Json;
 
-namespace DataContext.IdentityExstension
+namespace DataContext.IdentityExtensions
 {
     internal static class IdentityComponentsEndpointRouteBuilderExtensions
     {

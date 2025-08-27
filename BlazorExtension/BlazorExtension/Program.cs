@@ -3,7 +3,7 @@ using BlazorExtension.Components;
 using BlazorExtension.Components.Layout;
 using DataContext;
 using DataContext.DataContext;
-using DataContext.IdentityModels;
+using IdentityAbstractions.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;

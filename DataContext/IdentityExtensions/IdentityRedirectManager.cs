@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using IdentityAbstractions.Interfaces;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using System.Diagnostics.CodeAnalysis;
 
-namespace DataContext.IdentityExstension
+namespace DataContext.IdentityExtensions
 {
-    public sealed class IdentityRedirectManager(NavigationManager navigationManager)
+    public sealed class IdentityRedirectManager(NavigationManager navigationManager) : IIdentityRedirectManager
     {
         public const string StatusCookieName = "Identity.StatusMessage";
 

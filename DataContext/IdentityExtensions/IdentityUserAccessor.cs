@@ -1,4 +1,5 @@
-﻿using DataContext.IdentityModels;
+﻿using IdentityAbstractions.Interfaces;
+using IdentityAbstractions.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -7,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataContext.IdentityExstension
+namespace DataContext.IdentityExtensions
 {
-    public sealed class IdentityUserAccessor(UserManager<ApplicationUser> userManager, IdentityRedirectManager redirectManager)
+    public sealed class IdentityUserAccessor(UserManager<ApplicationUser> userManager, IIdentityRedirectManager redirectManager)
     {
         public async Task<ApplicationUser> GetRequiredUserAsync(HttpContext context)
         {

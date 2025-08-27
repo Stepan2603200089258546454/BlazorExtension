@@ -1,13 +1,7 @@
-﻿@using DataContext.IdentityExstension
-@using DataContext.IdentityModels
-@using Microsoft.AspNetCore.Authentication
-@using Microsoft.AspNetCore.Components.Forms
-@using Microsoft.AspNetCore.Identity
+﻿
+@inject IUserManager UserManager
 
-@inject SignInManager<ApplicationUser> SignInManager
-@inject IdentityRedirectManager RedirectManager
-
-@if (externalLogins.Length == 0)
+@if (externalLogins.Count() == 0)
 {
     <div>
         <p>
@@ -38,13 +32,13 @@ else
 }
 
 @code {
-    private AuthenticationScheme[] externalLogins = [];
+    private IEnumerable<AuthenticationScheme> externalLogins = [];
 
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        externalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToArray();
+        externalLogins = await UserManager.GetExternalAuthenticationSchemesAsync();
     }
 }

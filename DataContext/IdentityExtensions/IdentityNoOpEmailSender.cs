@@ -1,8 +1,8 @@
-﻿using DataContext.IdentityModels;
+﻿using IdentityAbstractions.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
-namespace DataContext.IdentityExstension
+namespace DataContext.IdentityExtensions
 {
     // Удалите блок «else if (EmailSender is IdentityNoOpEmailSender)» из
     // RegisterConfirmation.razor после обновления с использованием реальной реализации.
