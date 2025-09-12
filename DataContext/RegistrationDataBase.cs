@@ -47,7 +47,9 @@ namespace DataContext
             builder.Services.AddScoped<IdentityUserAccessor>();
             builder.Services.AddScoped<IIdentityRedirectManager, IdentityRedirectManager>();
             builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+            
             builder.Services.AddScoped<IUserManager, IdentityUserManager>();
+            builder.Services.AddScoped<IAccountManager, IdentityAccountManager>();
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 

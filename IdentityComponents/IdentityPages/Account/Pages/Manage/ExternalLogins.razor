@@ -1,17 +1,15 @@
 ﻿@page "/Account/Manage/ExternalLogins"
 
-@inject UserManager<ApplicationUser> UserManager
-@inject SignInManager<ApplicationUser> SignInManager
-@inject IdentityUserAccessor UserAccessor
-@inject IUserStore<ApplicationUser> UserStore
-@inject IIdentityRedirectManager RedirectManager
+@inject IAccountManager AccountManager
 
 <PageTitle>Управляйте внешними логинами</PageTitle>
 
 <StatusMessage />
+
 @if (currentLogins?.Count > 0)
 {
     <h3>Зарегистрированные логины</h3>
+
     <table class="table">
         <tbody>
             @foreach (var login in currentLogins)
@@ -60,8 +58,6 @@
 }
 
 @code {
-    public const string LinkLoginCallbackAction = "LinkLoginCallback";
-
     private ApplicationUser user = default!;
     private IList<UserLoginInfo>? currentLogins;
     private IList<AuthenticationScheme>? otherLogins;
@@ -81,56 +77,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
-        currentLogins = await UserManager.GetLoginsAsync(user);
-        otherLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync())
-            .Where(auth => currentLogins.All(ul => auth.Name != ul.LoginProvider))
-            .ToList();
-
-        string? passwordHash = null;
-        if (UserStore is IUserPasswordStore<ApplicationUser> userPasswordStore)
-        {
-            passwordHash = await userPasswordStore.GetPasswordHashAsync(user, HttpContext.RequestAborted);
-        }
-
-        showRemoveButton = passwordHash is not null || currentLogins.Count > 1;
-
-        if (HttpMethods.IsGet(HttpContext.Request.Method) && Action == LinkLoginCallbackAction)
-        {
-            await OnGetLinkLoginCallbackAsync();
-        }
+        var res = await AccountManager.ExternalLoginsOnInitializedAsync(HttpContext, Action);
+        user = res.user;
+        currentLogins = res.currentLogins;
+        otherLogins = res.otherLogins;
+        showRemoveButton = res.showRemoveButton;
     }
 
     private async Task OnSubmitAsync()
     {
-        var result = await UserManager.RemoveLoginAsync(user, LoginProvider!, ProviderKey!);
-        if (!result.Succeeded)
-        {
-            RedirectManager.RedirectToCurrentPageWithStatus("Ошибка: внешний логин не был удален.", HttpContext);
-        }
-
-        await SignInManager.RefreshSignInAsync(user);
-        RedirectManager.RedirectToCurrentPageWithStatus("Внешний вход был удален.", HttpContext);
-    }
-
-    private async Task OnGetLinkLoginCallbackAsync()
-    {
-        var userId = await UserManager.GetUserIdAsync(user);
-        var info = await SignInManager.GetExternalLoginInfoAsync(userId);
-        if (info is null)
-        {
-            RedirectManager.RedirectToCurrentPageWithStatus("Ошибка: не удалось загрузить внешние данные для входа.", HttpContext);
-        }
-
-        var result = await UserManager.AddLoginAsync(user, info);
-        if (!result.Succeeded)
-        {
-            RedirectManager.RedirectToCurrentPageWithStatus("Ошибка: внешний логин не был добавлен. Внешние логины могут быть связаны только с одной учётной записью.", HttpContext);
-        }
-
-        // Очистите существующий внешний cookie-файл, чтобы обеспечить чистый процесс входа в систему
-        await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
-        RedirectManager.RedirectToCurrentPageWithStatus("Добавлен внешний вход в систему.", HttpContext);
+        await AccountManager.ExternalLoginsOnSubmitAsync(HttpContext, user, LoginProvider, ProviderKey);
     }
 }

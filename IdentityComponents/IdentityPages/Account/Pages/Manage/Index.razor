@@ -1,13 +1,11 @@
 ﻿@page "/Account/Manage"
 
-@inject UserManager<ApplicationUser> UserManager
-@inject SignInManager<ApplicationUser> SignInManager
-@inject IdentityUserAccessor UserAccessor
-@inject IIdentityRedirectManager RedirectManager
+@inject IAccountManager AccountManager
 
 <PageTitle>Профиль</PageTitle>
 
 <h3>Профиль</h3>
+
 <StatusMessage />
 
 <div class="row">
@@ -38,36 +36,20 @@
     private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private ManageIndexInputModel Input { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
-        username = await UserManager.GetUserNameAsync(user);
-        phoneNumber = await UserManager.GetPhoneNumberAsync(user);
+        var res = await AccountManager.ManageIndexOnInitializedAsync(HttpContext);
+        user = res.user;
+        username = res.username;
+        phoneNumber = res.phoneNumber;
 
         Input.PhoneNumber ??= phoneNumber;
     }
 
     private async Task OnValidSubmitAsync()
     {
-        if (Input.PhoneNumber != phoneNumber)
-        {
-            var setPhoneResult = await UserManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-            if (!setPhoneResult.Succeeded)
-            {
-                RedirectManager.RedirectToCurrentPageWithStatus("Ошибка: не удалось установить номер телефона.", HttpContext);
-            }
-        }
-
-        await SignInManager.RefreshSignInAsync(user);
-        RedirectManager.RedirectToCurrentPageWithStatus("Ваш профиль был обновлен", HttpContext);
-    }
-
-    private sealed class InputModel
-    {
-        [Phone]
-        [Display(Name = "Номер телефона")]
-        public string? PhoneNumber { get; set; }
+        await AccountManager.ManageIndexOnValidSubmitAsync(HttpContext, Input, user, phoneNumber);
     }
 }

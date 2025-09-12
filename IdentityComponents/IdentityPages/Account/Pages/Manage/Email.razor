@@ -1,23 +1,23 @@
 ﻿@page "/Account/Manage/Email"
 
-@inject UserManager<ApplicationUser> UserManager
-@inject IEmailSender<ApplicationUser> EmailSender
-@inject IdentityUserAccessor UserAccessor
-@inject NavigationManager NavigationManager
+@inject IAccountManager AccountManager
 
 <PageTitle>Управление электронной почтой</PageTitle>
 
 <h3>Управление электронной почтой</h3>
 
-<StatusMessage Message="@message" />
+<StatusMessage Message="@AccountManager.Message" />
+
 <div class="row">
     <div class="col-xl-6">
         <form @onsubmit="OnSendEmailVerificationAsync" @formname="send-verification" id="send-verification-form" method="post">
             <AntiforgeryToken />
         </form>
+
         <EditForm Model="Input" FormName="change-email" OnValidSubmit="OnValidSubmitAsync" method="post">
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert" />
+            
             @if (isEmailConfirmed)
             {
                 <div class="form-floating mb-3 input-group">
@@ -36,6 +36,7 @@
                     <button type="submit" class="btn btn-link" form="send-verification-form">Отправить письмо с подтверждением</button>
                 </div>
             }
+            
             <div class="form-floating mb-3">
                 <InputText @bind-Value="Input.NewEmail" id="Input.NewEmail" class="form-control"
                            autocomplete="email" aria-required="true" placeholder="Введите новый адрес электронной почты" />
@@ -57,61 +58,25 @@
     private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm(FormName = "change-email")]
-    private InputModel Input { get; set; } = new();
+    private NewEmailInputModel Input { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
-        email = await UserManager.GetEmailAsync(user);
-        isEmailConfirmed = await UserManager.IsEmailConfirmedAsync(user);
+        (ApplicationUser user, string? email, bool isEmailConfirmed) initValue = await AccountManager.EmailOnInitializedAsync(HttpContext);
+        user = initValue.user;
+        email = initValue.email;
+        isEmailConfirmed = initValue.isEmailConfirmed;
 
         Input.NewEmail ??= email;
     }
 
     private async Task OnValidSubmitAsync()
     {
-        if (Input.NewEmail is null || Input.NewEmail == email)
-        {
-            message = "Ваш адрес электронной почты не изменился.";
-            return;
-        }
-
-        var userId = await UserManager.GetUserIdAsync(user);
-        var code = await UserManager.GenerateChangeEmailTokenAsync(user, Input.NewEmail);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var callbackUrl = NavigationManager.GetUriWithQueryParameters(
-            NavigationManager.ToAbsoluteUri("Account/ConfirmEmailChange").AbsoluteUri,
-            new Dictionary<string, object?> { ["userId"] = userId, ["email"] = Input.NewEmail, ["code"] = code });
-
-        await EmailSender.SendConfirmationLinkAsync(user, Input.NewEmail, HtmlEncoder.Default.Encode(callbackUrl));
-
-        message = "Ссылка для подтверждения изменения адреса электронной почты отправлена. Проверьте свою электронную почту.";
+        await AccountManager.EmailOnValidSubmitAsync(user, Input, email);
     }
 
     private async Task OnSendEmailVerificationAsync()
     {
-        if (email is null)
-        {
-            return;
-        }
-
-        var userId = await UserManager.GetUserIdAsync(user);
-        var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        var callbackUrl = NavigationManager.GetUriWithQueryParameters(
-            NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
-            new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code });
-
-        await EmailSender.SendConfirmationLinkAsync(user, email, HtmlEncoder.Default.Encode(callbackUrl));
-
-        message = "Письмо с подтверждением отправлено. Проверьте почту.";
-    }
-
-    private sealed class InputModel
-    {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Новое письмо")]
-        public string? NewEmail { get; set; }
+        await AccountManager.EmailOnSendEmailVerificationAsync(user, email);
     }
 }

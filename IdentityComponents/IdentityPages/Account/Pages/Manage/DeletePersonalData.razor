@@ -1,14 +1,10 @@
 ﻿@page "/Account/Manage/DeletePersonalData"
 
-@inject UserManager<ApplicationUser> UserManager
-@inject SignInManager<ApplicationUser> SignInManager
-@inject IdentityUserAccessor UserAccessor
-@inject IIdentityRedirectManager RedirectManager
-@inject ILogger<DeletePersonalData> Logger
+@inject IAccountManager AccountManager
 
 <PageTitle>Удалить персональные данные</PageTitle>
 
-<StatusMessage Message="@message" />
+<StatusMessage Message="@AccountManager.Message" />
 
 <h3>Удалить персональные данные</h3>
 
@@ -36,7 +32,6 @@
 </div>
 
 @code {
-    private string? message;
     private ApplicationUser user = default!;
     private bool requirePassword;
 
@@ -44,40 +39,18 @@
     private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private DeletePersonalDataInputModel Input { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
         Input ??= new();
-        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
-        requirePassword = await UserManager.HasPasswordAsync(user);
+        (ApplicationUser user, bool requirePassword) initValue = await AccountManager.DeletePersonalDataOnInitializedAsync(HttpContext);
+        user = initValue.user;
+        requirePassword = initValue.requirePassword;
     }
 
     private async Task OnValidSubmitAsync()
     {
-        if (requirePassword && !await UserManager.CheckPasswordAsync(user, Input.Password))
-        {
-            message = "Ошибка: неверный пароль.";
-            return;
-        }
-
-        var result = await UserManager.DeleteAsync(user);
-        if (!result.Succeeded)
-        {
-            throw new InvalidOperationException("Произошла непредвиденная ошибка при удалении пользователя..");
-        }
-
-        await SignInManager.SignOutAsync();
-
-        var userId = await UserManager.GetUserIdAsync(user);
-        Logger.LogInformation("Пользователь с идентификатором '{UserId}' удалил себя.", userId);
-
-        RedirectManager.RedirectToCurrentPage();
-    }
-
-    private sealed class InputModel
-    {
-        [DataType(DataType.Password)]
-        public string Password { get; set; } = "";
+        await AccountManager.DeletePersonalDataOnValidSubmitAsync(user, requirePassword, Input);
     }
 }

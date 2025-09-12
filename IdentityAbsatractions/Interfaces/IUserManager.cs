@@ -33,7 +33,5 @@ namespace IdentityAbstractions.Interfaces
         public Task OnResendEmailConfirmationValidSubmitAsync(EmailInputModel Input);
         public void OnResetPasswordInitialized(ResetPasswordInputModel Input, string? Code);
         public Task OnResetPasswordValidSubmitAsync(ResetPasswordInputModel Input);
-
-
     }
 }
