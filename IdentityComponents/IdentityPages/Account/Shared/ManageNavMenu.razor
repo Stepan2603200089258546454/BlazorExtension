@@ -1,28 +1,27 @@
-﻿
-@inject SignInManager<ApplicationUser> SignInManager
+﻿@inject SignInManager<ApplicationUser> SignInManager
 
 <ul class="nav nav-pills flex-column">
     
     <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage" Match="NavLinkMatch.All">Профиль</NavLink>
+        <NavLink class="nav-link" href="@Const.IdentityRoute.AccountManage.Index" Match="NavLinkMatch.All">Профиль</NavLink>
     </li>
     <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/Email">Электронная почта</NavLink>
+        <NavLink class="nav-link" href="@Const.IdentityRoute.AccountManage.Email">Электронная почта</NavLink>
     </li>
     <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/ChangePassword">Пароль</NavLink>
+        <NavLink class="nav-link" href="@Const.IdentityRoute.AccountManage.ChangePassword">Пароль</NavLink>
     </li>
     @if (hasExternalLogins)
     {
         <li class="nav-item">
-            <NavLink class="nav-link" href="Account/Manage/ExternalLogins">Внешние входы</NavLink>
+            <NavLink class="nav-link" href="@Const.IdentityRoute.AccountManage.ExternalLogins">Внешние входы</NavLink>
         </li>
     }
     <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/TwoFactorAuthentication">Двухфакторная аутентификация</NavLink>
+        <NavLink class="nav-link" href="@Const.IdentityRoute.AccountManage.TwoFactorAuthentication">Двухфакторная аутентификация</NavLink>
     </li>
     <li class="nav-item">
-        <NavLink class="nav-link" href="Account/Manage/PersonalData">Персональные данные</NavLink>
+        <NavLink class="nav-link" href="@Const.IdentityRoute.AccountManage.PersonalData">Персональные данные</NavLink>
     </li>
     <li class="nav-item">
         <NavLink class="nav-link" href="Home">Главная</NavLink>

@@ -1,4 +1,4 @@
-﻿@page "/Account/Manage/PersonalData"
+﻿@attribute [Route(Const.IdentityRoute.AccountManage.PersonalData)]
 
 @inject IAccountManager AccountManager
 
@@ -15,13 +15,13 @@
             <strong>Удаление этих данных приведет к безвозвратному удалению вашей учетной записи, восстановление невозможно.</strong>
         </p>
 
-        <form action="Account/Manage/DownloadPersonalData" method="post">
+        <form action="@Const.IdentityRoute.AccountManage.DownloadPersonalData" method="post">
             <AntiforgeryToken />
             <button class="btn btn-primary" type="submit">Скачать</button>
         </form>
         
         <p>
-            <a href="Account/Manage/DeletePersonalData" class="btn btn-danger">Удалить</a>
+            <a href="@Const.IdentityRoute.AccountManage.DeletePersonalData" class="btn btn-danger">Удалить</a>
         </p>
     </div>
 </div>

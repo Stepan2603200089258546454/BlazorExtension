@@ -1,4 +1,4 @@
-﻿@page "/Account/Manage/TwoFactorAuthentication"
+﻿@attribute [Route(Const.IdentityRoute.AccountManage.TwoFactorAuthentication)]
 
 @inject IAccountManager AccountManager
 
@@ -16,21 +16,33 @@
         {
             <div class="alert alert-danger">
                 <strong>У вас не осталось кодов восстановления.</strong>
-                <p>Прежде чем вы сможете войти в систему с помощью кода восстановления, вам необходимо <a href="Account/Manage/GenerateRecoveryCodes">сгенерировать новый набор кодов восстановления</a>.</p>
+                <p>
+                    Прежде чем вы сможете войти в систему с помощью кода восстановления, вам необходимо
+                    <a href="@Const.IdentityRoute.AccountManage.GenerateRecoveryCodes">сгенерировать новый набор кодов восстановления</a>
+                    .
+                </p>
             </div>
         }
         else if (recoveryCodesLeft == 1)
         {
             <div class="alert alert-danger">
                 <strong>У вас остался 1 код восстановления.</strong>
-                <p>Вы можете <a href="Account/Manage/GenerateRecoveryCodes">сгенерировать новый набор кодов восстановления</a>.</p>
+                <p>
+                    Вы можете
+                    <a href="@Const.IdentityRoute.AccountManage.GenerateRecoveryCodes">сгенерировать новый набор кодов восстановления</a>
+                    .
+                </p>
             </div>
         }
         else if (recoveryCodesLeft <= 3)
         {
             <div class="alert alert-warning">
                 <strong>У вас осталось @recoveryCodesLeft кодов восстановления.</strong>
-                <p>Вам следует <a href="Account/Manage/GenerateRecoveryCodes">сгенерировать новый набор кодов восстановления</a>.</p>
+                <p>
+                    Вам следует
+                    <a href="@Const.IdentityRoute.AccountManage.GenerateRecoveryCodes">сгенерировать новый набор кодов восстановления</a>
+                    .
+                </p>
             </div>
         }
 
@@ -42,19 +54,19 @@
             </form>
         }
 
-        <a href="Account/Manage/Disable2fa" class="btn btn-primary">Отключить 2FA</a>
-        <a href="Account/Manage/GenerateRecoveryCodes" class="btn btn-primary">Сбросить коды восстановления</a>
+        <a href="@Const.IdentityRoute.AccountManage.Disable2fa" class="btn btn-primary">Отключить 2FA</a>
+        <a href="@Const.IdentityRoute.AccountManage.GenerateRecoveryCodes" class="btn btn-primary">Сбросить коды восстановления</a>
     }
 
     <h4>Приложение-аутентификатор</h4>
     @if (!hasAuthenticator)
     {
-        <a href="Account/Manage/EnableAuthenticator" class="btn btn-primary">Добавить приложение для аутентификации</a>
+        <a href="@Const.IdentityRoute.AccountManage.EnableAuthenticator" class="btn btn-primary">Добавить приложение для аутентификации</a>
     }
     else
     {
-        <a href="Account/Manage/EnableAuthenticator" class="btn btn-primary">Настройте приложение-аутентификатор</a>
-        <a href="Account/Manage/ResetAuthenticator" class="btn btn-primary">Сбросить приложение аутентификации</a>
+        <a href="@Const.IdentityRoute.AccountManage.EnableAuthenticator" class="btn btn-primary">Настройте приложение-аутентификатор</a>
+        <a href="@Const.IdentityRoute.AccountManage.ResetAuthenticator" class="btn btn-primary">Сбросить приложение аутентификации</a>
     }
 }
 else

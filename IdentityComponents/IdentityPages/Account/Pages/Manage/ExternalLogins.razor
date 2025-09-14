@@ -1,4 +1,4 @@
-﻿@page "/Account/Manage/ExternalLogins"
+﻿@attribute [Route(Const.IdentityRoute.AccountManage.ExternalLogins)]
 
 @inject IAccountManager AccountManager
 
@@ -42,7 +42,7 @@
 {
     <h4>Добавьте еще одну услугу для входа.</h4>
     <hr />
-    <form class="form-horizontal" action="Account/Manage/LinkExternalLogin" method="post">
+    <form class="form-horizontal" action="@Const.IdentityRoute.AccountManage.LinkExternalLogin" method="post">
         <AntiforgeryToken />
         <div>
             <p>

@@ -1,4 +1,4 @@
-﻿@page "/Account/Login"
+﻿@attribute [Route(Const.IdentityRoute.Account.Login)]
 
 @inject IUserManager UserManager
 
@@ -38,7 +38,7 @@
                 </div>
                 <div>
                     <p>
-                        <a href="Account/ForgotPassword">Забыли пароль?</a>
+                        <a href="@Const.IdentityRoute.Account.ForgotPassword">Забыли пароль?</a>
                     </p>
                     <p>
                         <a href="@UserManager.GetUrlAccountRegister(ReturnUrl)">
@@ -46,7 +46,7 @@
                         </a>
                     </p>
                     <p>
-                        <a href="Account/ResendEmailConfirmation">Повторно отправить подтверждение по электронной почте</a>
+                        <a href="@Const.IdentityRoute.Account.ResendEmailConfirmation">Повторно отправить подтверждение по электронной почте</a>
                     </p>
                 </div>
             </EditForm>

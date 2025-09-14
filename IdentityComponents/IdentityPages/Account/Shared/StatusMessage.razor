@@ -1,7 +1,7 @@
 ﻿
-@if (!string.IsNullOrEmpty(DisplayMessage))
+@if (string.IsNullOrEmpty(DisplayMessage) == false)
 {
-    var statusMessageClass = DisplayMessage.StartsWith("Ошибка") ? "danger" : "success";
+    string statusMessageClass = DisplayMessage.StartsWith("Ошибка") ? "danger" : "success";
     <div class="alert alert-@statusMessageClass" role="alert">
         @DisplayMessage
     </div>

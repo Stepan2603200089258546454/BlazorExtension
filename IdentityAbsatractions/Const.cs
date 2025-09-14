@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace IdentityAbstractions
 {
-    public class Const
+    public static partial class Const
     {
+        public const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
+        public const string StatusCookieName = "Identity.StatusMessage";
         public const string LoginCallbackAction = "LoginCallback";
+        public const string LinkLoginCallbackAction = "LinkLoginCallback";
     }
 }

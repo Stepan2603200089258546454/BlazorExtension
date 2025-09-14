@@ -1,4 +1,4 @@
-﻿@page "/Account/RegisterConfirmation"
+﻿@attribute [Route(Const.IdentityRoute.Account.RegisterConfirmation)]
 
 @inject IUserManager UserManager
 
@@ -11,7 +11,8 @@
 @if (emailConfirmationLink is not null)
 {
     <p>
-        В настоящее время в этом приложении не зарегистрирован реальный отправитель электронной почты. Подробнее о настройке реального отправителя электронной почты см. в <a href="https://aka.ms/aspaccountconf">этих документах</a>.
+        В настоящее время в этом приложении не зарегистрирован реальный отправитель электронной почты.
+        Подробнее о настройке реального отправителя электронной почты см. в <a href="https://aka.ms/aspaccountconf">этих документах</a>.
         Обычно это письмо отправляется по адресу: <a href="@emailConfirmationLink">Нажмите здесь, чтобы подтвердить свою учётную запись</a>
     </p>
 }

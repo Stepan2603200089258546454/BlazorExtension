@@ -1,4 +1,4 @@
-﻿@page "/Account/LoginWith2fa"
+﻿@attribute [Route(Const.IdentityRoute.Account.LoginWith2fa)]
 
 @inject IUserManager UserManager
 
@@ -36,7 +36,7 @@
 </div>
 <p>
     Нет доступа к устройству аутентификации? Вы можете
-    <a href="Account/LoginWithRecoveryCode?ReturnUrl=@ReturnUrl">войти с помощью кода восстановления</a>.
+    <a href="@(Const.IdentityRoute.Account.LoginWithRecoveryCode)?ReturnUrl=@ReturnUrl">войти с помощью кода восстановления</a>.
 </p>
 
 @code {

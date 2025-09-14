@@ -1,4 +1,5 @@
-﻿using IdentityAbstractions.Interfaces;
+﻿using IdentityAbstractions;
+using IdentityAbstractions.Interfaces;
 using IdentityAbstractions.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -14,11 +15,11 @@ namespace DataContext.IdentityExtensions
     {
         public async Task<ApplicationUser> GetRequiredUserAsync(HttpContext context)
         {
-            var user = await userManager.GetUserAsync(context.User);
+            ApplicationUser? user = await userManager.GetUserAsync(context.User);
 
             if (user is null)
             {
-                redirectManager.RedirectToWithStatus("Account/InvalidUser",
+                redirectManager.RedirectToWithStatus(Const.IdentityRoute.Account.InvalidUser,
                     $"Ошибка: невозможно загрузить пользователя с идентификатором '{userManager.GetUserId(context.User)}'.", context);
             }
 

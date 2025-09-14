@@ -1,4 +1,5 @@
 ﻿using DataContext.IdentityExtensions;
+using IdentityAbstractions;
 using IdentityAbstractions.FormsModels;
 using IdentityAbstractions.Interfaces;
 using IdentityAbstractions.Models;
@@ -23,8 +24,6 @@ namespace DataContext.IdentityServices
 {
     public class IdentityAccountManager : IAccountManager
     {
-        private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
-        private const string LinkLoginCallbackAction = "LinkLoginCallback";
         public string? Message { get; private set; }
 
         private readonly UserManager<ApplicationUser> UserManager;
@@ -250,7 +249,7 @@ namespace DataContext.IdentityServices
         {
             return string.Format(
                 CultureInfo.InvariantCulture,
-                AuthenticatorUriFormat,
+                Const.AuthenticatorUriFormat,
                 UrlEncoder.Encode("Microsoft.AspNetCore.Identity.UI"),
                 UrlEncoder.Encode(email),
                 unformattedKey);
@@ -272,7 +271,7 @@ namespace DataContext.IdentityServices
 
             bool showRemoveButton = passwordHash is not null || currentLogins.Count > 1;
 
-            if (HttpMethods.IsGet(HttpContext.Request.Method) && Action == LinkLoginCallbackAction)
+            if (HttpMethods.IsGet(HttpContext.Request.Method) && Action == Const.LinkLoginCallbackAction)
             {
                 await ExternalLoginsOnGetLinkLoginCallbackAsync(HttpContext, user);
             }

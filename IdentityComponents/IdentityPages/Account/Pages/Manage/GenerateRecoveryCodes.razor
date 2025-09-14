@@ -1,4 +1,4 @@
-﻿@page "/Account/Manage/GenerateRecoveryCodes"
+﻿@attribute [Route(Const.IdentityRoute.AccountManage.GenerateRecoveryCodes)]
 
 @inject IAccountManager AccountManager
 
@@ -22,7 +22,7 @@ else
         </p>
         <p>
             Генерация новых кодов восстановления не изменяет ключи, используемые в приложениях аутентификации. Если вы хотите изменить ключ,
-            используемый в приложении аутентификации, вам следует <a href="Account/Manage/ResetAuthenticator">сбросить ключи аутентификации</a>.
+            используемый в приложении аутентификации, вам следует <a href="@Const.IdentityRoute.AccountManage.ResetAuthenticator">сбросить ключи аутентификации</a>.
         </p>
     </div>
 

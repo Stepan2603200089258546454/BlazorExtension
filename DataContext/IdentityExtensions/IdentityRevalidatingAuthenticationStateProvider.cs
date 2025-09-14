@@ -23,26 +23,26 @@ namespace DataContext.IdentityExtensions
             AuthenticationState authenticationState, CancellationToken cancellationToken)
         {
             // Получите менеджер пользователей из новой области действия, чтобы убедиться, что он извлекает свежие данные.
-            await using var scope = scopeFactory.CreateAsyncScope();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            await using AsyncServiceScope scope = scopeFactory.CreateAsyncScope();
+            UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             return await ValidateSecurityStampAsync(userManager, authenticationState.User);
         }
 
         private async Task<bool> ValidateSecurityStampAsync(UserManager<ApplicationUser> userManager, ClaimsPrincipal principal)
         {
-            var user = await userManager.GetUserAsync(principal);
+            ApplicationUser? user = await userManager.GetUserAsync(principal);
             if (user is null)
             {
                 return false;
             }
-            else if (!userManager.SupportsUserSecurityStamp)
+            else if (userManager.SupportsUserSecurityStamp == false)
             {
                 return true;
             }
             else
             {
-                var principalStamp = principal.FindFirstValue(options.Value.ClaimsIdentity.SecurityStampClaimType);
-                var userStamp = await userManager.GetSecurityStampAsync(user);
+                string? principalStamp = principal.FindFirstValue(options.Value.ClaimsIdentity.SecurityStampClaimType);
+                string userStamp = await userManager.GetSecurityStampAsync(user);
                 return principalStamp == userStamp;
             }
         }
