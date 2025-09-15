@@ -1,6 +1,7 @@
 ﻿using DataContext.IdentityExtensions;
 using IdentityAbstractions;
 using IdentityAbstractions.FormsModels;
+using IdentityAbstractions.IdentityConstants;
 using IdentityAbstractions.Interfaces;
 using IdentityAbstractions.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -249,7 +250,7 @@ namespace DataContext.IdentityServices
         {
             return string.Format(
                 CultureInfo.InvariantCulture,
-                Const.AuthenticatorUriFormat,
+                IdentityConst.AuthenticatorUriFormat,
                 UrlEncoder.Encode("Microsoft.AspNetCore.Identity.UI"),
                 UrlEncoder.Encode(email),
                 unformattedKey);
@@ -271,7 +272,7 @@ namespace DataContext.IdentityServices
 
             bool showRemoveButton = passwordHash is not null || currentLogins.Count > 1;
 
-            if (HttpMethods.IsGet(HttpContext.Request.Method) && Action == Const.LinkLoginCallbackAction)
+            if (HttpMethods.IsGet(HttpContext.Request.Method) && Action == IdentityConst.LinkLoginCallbackAction)
             {
                 await ExternalLoginsOnGetLinkLoginCallbackAsync(HttpContext, user);
             }
@@ -303,7 +304,7 @@ namespace DataContext.IdentityServices
                 RedirectManager.RedirectToCurrentPageWithStatus("Ошибка: внешний логин не был добавлен. Внешние логины могут быть связаны только с одной учётной записью.", HttpContext);
             }
             // Очистите существующий внешний cookie-файл, чтобы обеспечить чистый процесс входа в систему
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await HttpContext.SignOutAsync(Microsoft.AspNetCore.Identity.IdentityConstants.ExternalScheme);
 
             RedirectManager.RedirectToCurrentPageWithStatus("Добавлен внешний вход в систему.", HttpContext);
         }

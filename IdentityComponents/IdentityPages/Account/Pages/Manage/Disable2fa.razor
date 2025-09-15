@@ -1,4 +1,4 @@
-﻿@attribute [Route(Const.IdentityRoute.AccountManage.Disable2fa)]
+﻿@attribute [Route(IdentityConst.IdentityRoute.AccountManage.Disable2fa)]
 
 @inject IAccountManager AccountManager
 
@@ -14,7 +14,7 @@
     </p>
     <p>
         Отключение двухфакторной аутентификации не меняет ключи, используемые в приложениях аутентификации. Если вы хотите изменить ключ,
-        используемый в приложении аутентификации, вам следует <a href="@Const.IdentityRoute.AccountManage.ResetAuthenticator">сбросить ключи аутентификации</a>.
+        используемый в приложении аутентификации, вам следует <a href="@IdentityConst.IdentityRoute.AccountManage.ResetAuthenticator">сбросить ключи аутентификации</a>.
     </p>
 </div>
 

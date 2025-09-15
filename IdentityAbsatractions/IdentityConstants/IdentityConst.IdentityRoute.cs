@@ -1,6 +1,6 @@
-﻿namespace IdentityAbstractions
+﻿namespace IdentityAbstractions.IdentityConstants
 {
-    public static partial class Const
+    public static partial class IdentityConst
     {
         public static class IdentityRoute
         {

@@ -1,5 +1,5 @@
 ﻿using DataContext.IdentityExtensions;
-using IdentityAbstractions;
+using IdentityAbstractions.IdentityConstants;
 using IdentityAbstractions.FormsModels;
 using IdentityAbstractions.Interfaces;
 using IdentityAbstractions.Models;
@@ -159,7 +159,7 @@ namespace DataContext.IdentityServices
 
             if (HttpMethods.IsGet(httpContext.Request.Method))
             {
-                if (action == Const.LoginCallbackAction)
+                if (action == IdentityConst.LoginCallbackAction)
                 {
                     await OnExternalLoginCallbackAsync(httpContext, externalLoginInfo, returnUrl, input);
                     return externalLoginInfo;
@@ -273,7 +273,7 @@ namespace DataContext.IdentityServices
             if (HttpMethods.IsGet(httpContext.Request.Method))
             {
                 // Очистите существующий внешний cookie-файл, чтобы обеспечить чистый процесс входа в систему
-                await httpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+                await httpContext.SignOutAsync(Microsoft.AspNetCore.Identity.IdentityConstants.ExternalScheme);
             }
         }
         public async ValueTask LoginUser(LoginInputModel Input, string? ReturnUrl)

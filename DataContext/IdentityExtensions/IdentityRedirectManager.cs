@@ -1,4 +1,5 @@
 ﻿using IdentityAbstractions;
+using IdentityAbstractions.IdentityConstants;
 using IdentityAbstractions.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
@@ -48,7 +49,7 @@ namespace DataContext.IdentityExtensions
         [DoesNotReturn]
         public void RedirectToWithStatus(string uri, string message, HttpContext context)
         {
-            context.Response.Cookies.Append(Const.StatusCookieName, message, StatusCookieBuilder.Build(context));
+            context.Response.Cookies.Append(IdentityConst.StatusCookieName, message, StatusCookieBuilder.Build(context));
             RedirectTo(uri);
         }
 

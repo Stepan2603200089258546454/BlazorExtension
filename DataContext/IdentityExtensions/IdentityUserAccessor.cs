@@ -1,4 +1,5 @@
 ﻿using IdentityAbstractions;
+using IdentityAbstractions.IdentityConstants;
 using IdentityAbstractions.Interfaces;
 using IdentityAbstractions.Models;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +20,7 @@ namespace DataContext.IdentityExtensions
 
             if (user is null)
             {
-                redirectManager.RedirectToWithStatus(Const.IdentityRoute.Account.InvalidUser,
+                redirectManager.RedirectToWithStatus(IdentityConst.IdentityRoute.Account.InvalidUser,
                     $"Ошибка: невозможно загрузить пользователя с идентификатором '{userManager.GetUserId(context.User)}'.", context);
             }
 
