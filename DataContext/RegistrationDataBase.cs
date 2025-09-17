@@ -44,12 +44,14 @@ namespace DataContext
         public static void AddDataBase(this IHostApplicationBuilder builder)
         {
             builder.Services.AddCascadingAuthenticationState();
+
             builder.Services.AddScoped<IdentityUserAccessor>();
             builder.Services.AddScoped<IIdentityRedirectManager, IdentityRedirectManager>();
             builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
             
             builder.Services.AddScoped<IUserManager, IdentityUserManager>();
             builder.Services.AddScoped<IAccountManager, IdentityAccountManager>();
+            builder.Services.AddScoped<IIdentityManager, IdentityManager>();
 
             builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
@@ -71,6 +73,7 @@ namespace DataContext
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager()
                 .AddDefaultTokenProviders();

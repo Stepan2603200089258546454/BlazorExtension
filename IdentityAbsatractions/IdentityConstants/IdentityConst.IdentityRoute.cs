@@ -43,6 +43,10 @@
                 public const string ChangePassword = "/Account/Manage/ChangePassword";
                 public const string LinkExternalLogin = "/Account/Manage/LinkExternalLogin";
             }
+            public static class Admins
+            {
+
+            }
         }
     }
 }
