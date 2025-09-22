@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решен
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityAbstractions", "IdentityAbsatractions\IdentityAbstractions.csproj", "{1135E7C0-571F-4E66-B0FF-D4562A44CF58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComponents", "CommonComponents\CommonComponents.csproj", "{CE45B469-DBD1-4BC8-A081-B07B43D81189}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{1135E7C0-571F-4E66-B0FF-D4562A44CF58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1135E7C0-571F-4E66-B0FF-D4562A44CF58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1135E7C0-571F-4E66-B0FF-D4562A44CF58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE45B469-DBD1-4BC8-A081-B07B43D81189}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE45B469-DBD1-4BC8-A081-B07B43D81189}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE45B469-DBD1-4BC8-A081-B07B43D81189}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE45B469-DBD1-4BC8-A081-B07B43D81189}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

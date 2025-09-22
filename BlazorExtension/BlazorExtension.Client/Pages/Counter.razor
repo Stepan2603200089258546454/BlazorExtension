@@ -1,5 +1,4 @@
-﻿@page "/counter"
-@rendermode InteractiveAuto
+﻿@rendermode _renderAssigned
 
 <PageTitle>Счетчик</PageTitle>
 
@@ -8,12 +7,3 @@
 <p role="status">Текущий счет: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Нажмите на меня</button>
-
-@code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
-}

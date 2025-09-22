@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CommonComponents\CommonComponents.csproj" />
     <ProjectReference Include="..\..\DataContext\DataContext.csproj" />
     <ProjectReference Include="..\..\IdentityComponents\IdentityComponents.csproj" />
     <ProjectReference Include="..\BlazorExtension.Client\BlazorExtension.Client.csproj" />
