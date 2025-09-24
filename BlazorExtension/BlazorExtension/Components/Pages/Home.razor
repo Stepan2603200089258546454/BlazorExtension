@@ -1,8 +1,38 @@
 ﻿@page "/"
 @page "/Home"
+@using CommonComponents.Services
+@rendermode InteractiveServer
+@inject IJSRuntime js
 
 <PageTitle>Главная</PageTitle>
 
-<h1>Привет, мир!</h1>
+<h1>Привет, мир! [@RendererInfo.Name]</h1>
 
 Добро пожаловать в ваше новое приложение.
+
+<button class="btn btn-primary" @onclick="Invoke">JS</button>
+
+@code {
+    private DeviceInfo test;
+
+    protected override async Task OnInitializedAsync()
+    {
+        test = new DeviceInfo(js);
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var size = await test.GetViewportSize();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task Invoke()
+    {
+        var size = await test.GetViewportSize();
+        //var device = await test.GetDeviceInfo();
+    }
+}
