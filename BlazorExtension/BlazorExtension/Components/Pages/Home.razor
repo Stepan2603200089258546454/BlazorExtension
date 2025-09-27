@@ -13,26 +13,21 @@
 <button class="btn btn-primary" @onclick="Invoke">JS</button>
 
 @code {
-    private DeviceInfo test;
+    private DeviceInfoService test;
+
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        test = new DeviceInfo(js);
+        test = new DeviceInfoService(js);
+        var deviceInformation = test.GetDeviceInfo(HttpContext);
         await base.OnInitializedAsync();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var size = await test.GetViewportSize();
-        }
-        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task Invoke()
     {
         var size = await test.GetViewportSize();
-        //var device = await test.GetDeviceInfo();
+        var deviceInformation = await test.GetDeviceInfo();
     }
 }
