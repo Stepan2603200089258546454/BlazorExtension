@@ -1,0 +1,43 @@
+﻿
+<!-- Модальное окно -->
+<div class="modal fade" id="@Id"
+     data-bs-backdrop="@(Settings.Backdrop == ModalDialogBackdrop.Static ? "static" : "dynamic")"
+     data-bs-keyboard="@(Settings.Backdrop == ModalDialogBackdrop.Static ? "false" : "true")"
+     tabindex="-1"
+     aria-labelledby="@IdLabel"
+     aria-hidden="true">
+    <div class="modal-dialog @Settings.ValueStyle ">
+        <div class="modal-content">
+            @if (Settings.EnabledHeader)
+            {
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="@IdLabel">@Settings.Title</h1>
+                    @if (Settings.EnabledButtonCancelHead)
+                    {
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть" @onclick="Cancel" />
+                    }
+                </div>
+            }
+            <div class="modal-body">
+                @ChildContent
+            </div>
+            @if (Settings.EnabledFooter)
+            {
+                <div class="modal-footer">
+                    @if (Settings.EnabledButtonCancel)
+                    {
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="Cancel">@Settings.TextButtonCancel</button>
+                    }
+                    @if (Settings.EnabledButtonNo)
+                    {
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="No">@Settings.TextButtonNo</button>
+                    }
+                    @if (Settings.EnabledButtonOk)
+                    {
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="Ok">@Settings.TextButtonOk</button>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

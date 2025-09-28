@@ -1,33 +1,55 @@
 ﻿@page "/"
 @page "/Home"
-@using CommonComponents.Services
 @rendermode InteractiveServer
-@inject IJSRuntime js
 
 <PageTitle>Главная</PageTitle>
+
+<ModalDialog Id="modal" Settings="ModalDialogSettings" OnResult="CallBackModal">
+    <p>Modal</p>
+</ModalDialog>
 
 <h1>Привет, мир! [@RendererInfo.Name]</h1>
 
 Добро пожаловать в ваше новое приложение.
 
-<button class="btn btn-primary" @onclick="Invoke">JS</button>
+<button class="btn btn-primary" @onclick="Invoke1">JS 1</button>
+<button class="btn btn-primary" @onclick="Invoke2">JS 2</button>
 
 @code {
     private DeviceInfoService test;
-
+    [Inject]
+    private IJSRuntime js{ get; set; }
+    [Inject]
+    private BootstrapHelperService bootstrapHelper{ get; set; }
     [CascadingParameter]
     public HttpContext? HttpContext { get; set; }
+
+    private ModalDialogSettings ModalDialogSettings = new ModalDialogSettings()
+    {
+        
+    };
 
     protected override async Task OnInitializedAsync()
     {
         test = new DeviceInfoService(js);
+
         var deviceInformation = test.GetDeviceInfo(HttpContext);
         await base.OnInitializedAsync();
     }
 
-    private async Task Invoke()
+    private async Task Invoke1()
     {
         var size = await test.GetViewportSize();
         var deviceInformation = await test.GetDeviceInfo();
+        var openModal = await bootstrapHelper.OpenModal("modal");
+    }
+    private async Task Invoke2()
+    {
+        var closeModal = await bootstrapHelper.CloseModal("modal");
+    }
+
+    private async Task CallBackModal(bool? value)
+    {
+        
     }
 }

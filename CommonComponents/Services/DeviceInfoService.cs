@@ -1,5 +1,6 @@
 ﻿using CommonComponents.Enums;
 using CommonComponents.Models;
+using CommonComponents.Services.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using System;
@@ -11,14 +12,11 @@ using System.Threading.Tasks;
 
 namespace CommonComponents.Services
 {
-    public class DeviceInfoService : IAsyncDisposable
+    public class DeviceInfoService : BaseJSService
     {
-        private readonly Lazy<Task<IJSObjectReference>> moduleTask;
-
-        public DeviceInfoService(IJSRuntime jsRuntime)
+        public DeviceInfoService(IJSRuntime jsRuntime) : base(jsRuntime, "deviceDetector")
         {
-            moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
-                "import", "./_content/CommonComponents/deviceDetector.js").AsTask());
+
         }
         /// <summary>
         /// Получить размеры экрана (только интерактив)
@@ -53,15 +51,6 @@ namespace CommonComponents.Services
         {
             IJSObjectReference module = await moduleTask.Value;
             return await module.InvokeAsync<string>("getUserAgent");
-        }
-        
-        public async ValueTask DisposeAsync()
-        {
-            if (moduleTask.IsValueCreated)
-            {
-                IJSObjectReference module = await moduleTask.Value;
-                await module.DisposeAsync();
-            }
         }
     }
 }

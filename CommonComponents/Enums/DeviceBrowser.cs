@@ -15,13 +15,4 @@ namespace CommonComponents.Enums
         Edge,
         Opera,
     }
-    public enum DevicePlatform
-    {
-        Unknown,
-        Windows,
-        macOS,
-        Linux,
-        Android,
-        iOS
-    }
 }

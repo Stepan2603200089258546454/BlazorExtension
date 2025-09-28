@@ -1,6 +1,7 @@
 using BlazorExtension.Client.Pages;
 using BlazorExtension.Components;
 using BlazorExtension.Components.Layout;
+using CommonComponents;
 using DataContext;
 using DataContext.DataContext;
 using IdentityAbstractions.Models;
@@ -27,7 +28,7 @@ builder.Services.AddHttpClient();
 
 builder.AddDataBase();
 
-
+builder.Services.AddCommonServices();
 
 //MS openAPI
 builder.Services.AddOpenApi();
