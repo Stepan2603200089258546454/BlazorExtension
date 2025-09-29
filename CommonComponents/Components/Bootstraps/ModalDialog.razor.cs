@@ -11,15 +11,6 @@ namespace CommonComponents.Components.Bootstraps
     public partial class ModalDialog : ComponentBase
     {
         /// <summary>
-        /// Id модального окна
-        /// </summary>
-        [Parameter, EditorRequired]
-        public string Id { get; set; }
-        /// <summary>
-        /// Вычисляемое поле связки для браузера
-        /// </summary>
-        private string IdLabel => Id + "Label";
-        /// <summary>
         /// Содержимое модального окна
         /// </summary>
         [Parameter]

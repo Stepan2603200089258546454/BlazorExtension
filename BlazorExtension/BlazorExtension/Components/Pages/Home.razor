@@ -4,7 +4,7 @@
 
 <PageTitle>Главная</PageTitle>
 
-<ModalDialog Id="modal" Settings="ModalDialogSettings" OnResult="CallBackModal">
+<ModalDialog Settings="ModalDialogSettings" OnResult="CallBackModal">
     <p>Modal</p>
 </ModalDialog>
 
@@ -12,21 +12,44 @@
 
 Добро пожаловать в ваше новое приложение.
 
-<button class="btn btn-primary" @onclick="Invoke1">JS 1</button>
-<button class="btn btn-primary" @onclick="Invoke2">JS 2</button>
+<div class="mb-3">
+    <button class="btn btn-primary" @onclick="Invoke1">JS 1</button>
+    <button class="btn btn-primary" @onclick="Invoke2">JS 2</button>
+</div>
+<TabList Settings="TabListSettings">
+    <HeaderContent>
+        <TabListHeaderItem Settings="@TabListSettings.GetItemsSettings("test-1", true)">Test-1</TabListHeaderItem>
+        <TabListHeaderItem Settings="@TabListSettings.GetItemsSettings("test-2")">Test-2</TabListHeaderItem>
+    </HeaderContent>
+    <BodyContent>
+        <TabListBodyItem Settings="@TabListSettings.GetItemsSettings("test-1", true)">
+            Test 1
+        </TabListBodyItem>
+        <TabListBodyItem Settings="@TabListSettings.GetItemsSettings("test-2")">
+            Test 2
+        </TabListBodyItem>
+    </BodyContent>
+</TabList>
 
 @code {
     private DeviceInfoService test;
     [Inject]
-    private IJSRuntime js{ get; set; }
+    private IJSRuntime js { get; set; }
     [Inject]
-    private BootstrapHelperService bootstrapHelper{ get; set; }
+    private BootstrapHelperService bootstrapHelper { get; set; }
     [CascadingParameter]
     public HttpContext? HttpContext { get; set; }
 
     private ModalDialogSettings ModalDialogSettings = new ModalDialogSettings()
     {
-        
+        Id = "modal"
+    };
+    private TabListSettings TabListSettings = new TabListSettings()
+    {
+        Id = "tab-list-demo",
+        Type = TabListType.Pill,
+        Fill = TabListFill.Default,
+        Orientation = TabListOrientation.Horizontal
     };
 
     protected override async Task OnInitializedAsync()
@@ -41,15 +64,15 @@
     {
         var size = await test.GetViewportSize();
         var deviceInformation = await test.GetDeviceInfo();
-        var openModal = await bootstrapHelper.OpenModal("modal");
+        var openModal = await bootstrapHelper.OpenModal(ModalDialogSettings.Id);
     }
     private async Task Invoke2()
     {
-        var closeModal = await bootstrapHelper.CloseModal("modal");
+        var closeModal = await bootstrapHelper.CloseModal(ModalDialogSettings.Id);
     }
 
     private async Task CallBackModal(bool? value)
     {
-        
+
     }
 }

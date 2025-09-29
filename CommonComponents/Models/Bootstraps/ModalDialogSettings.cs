@@ -1,4 +1,5 @@
 ﻿using CommonComponents.Enums.Bootstraps;
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,14 @@ namespace CommonComponents.Models.Bootstraps
 {
     public class ModalDialogSettings
     {
+        /// <summary>
+        /// Id модального окна
+        /// </summary>
+        public required string Id { get; set; }
+        /// <summary>
+        /// Вычисляемое поле связки для браузера
+        /// </summary>
+        public string IdLabel => Id + "Label";
         public string Title { get; set; } = "Заголовок";
         /// <summary>
         /// Настройки закрываемости при нажатии вне модального окна

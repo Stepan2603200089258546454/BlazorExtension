@@ -1,17 +1,17 @@
 ﻿
 <!-- Модальное окно -->
-<div class="modal fade" id="@Id"
+<div class="modal fade" id="@Settings.Id"
      data-bs-backdrop="@(Settings.Backdrop == ModalDialogBackdrop.Static ? "static" : "dynamic")"
      data-bs-keyboard="@(Settings.Backdrop == ModalDialogBackdrop.Static ? "false" : "true")"
      tabindex="-1"
-     aria-labelledby="@IdLabel"
+     aria-labelledby="@Settings.IdLabel"
      aria-hidden="true">
     <div class="modal-dialog @Settings.ValueStyle ">
         <div class="modal-content">
             @if (Settings.EnabledHeader)
             {
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="@IdLabel">@Settings.Title</h1>
+                    <h1 class="modal-title fs-5" id="@Settings.IdLabel">@Settings.Title</h1>
                     @if (Settings.EnabledButtonCancelHead)
                     {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть" @onclick="Cancel" />

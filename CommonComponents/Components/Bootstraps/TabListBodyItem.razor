@@ -1,0 +1,14 @@
+﻿<div class="@Settings.BodyClass"
+     id="@Settings.BodyId"
+     role="tabpanel"
+     aria-labelledby="@Settings.HeaderId"
+     tabindex="0">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public TabListItemSettings Settings { get; set; }
+    [Parameter, EditorRequired]
+    public RenderFragment ChildContent { get; set; }
+}
