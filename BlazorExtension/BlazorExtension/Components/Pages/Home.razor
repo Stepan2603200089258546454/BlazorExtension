@@ -13,13 +13,18 @@
 Добро пожаловать в ваше новое приложение.
 
 <div class="mb-3">
+    <Button Settings="ButtonSettings" OnClick="Invoke1">Custom button</Button>
     <button class="btn btn-primary" @onclick="Invoke1">JS 1</button>
     <button class="btn btn-primary" @onclick="Invoke2">JS 2</button>
 </div>
 <TabList Settings="TabListSettings">
     <HeaderContent>
-        <TabListHeaderItem Settings="@TabListSettings.GetItemsSettings("test-1", true)">Test-1</TabListHeaderItem>
-        <TabListHeaderItem Settings="@TabListSettings.GetItemsSettings("test-2")">Test-2</TabListHeaderItem>
+        <TabListHeaderItem Settings="@TabListSettings.GetItemsSettings("test-1", true)">
+            Test-1
+        </TabListHeaderItem>
+        <TabListHeaderItem Settings="@TabListSettings.GetItemsSettings("test-2")">
+            Test-2
+        </TabListHeaderItem>
     </HeaderContent>
     <BodyContent>
         <TabListBodyItem Settings="@TabListSettings.GetItemsSettings("test-1", true)">
@@ -50,6 +55,10 @@
         Type = TabListType.Pill,
         Fill = TabListFill.Default,
         Orientation = TabListOrientation.Horizontal
+    };
+    private ButtonSettings ButtonSettings = new ButtonSettings()
+    {
+        Id = "test-btn"
     };
 
     protected override async Task OnInitializedAsync()

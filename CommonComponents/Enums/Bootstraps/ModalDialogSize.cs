@@ -6,20 +6,20 @@
     public enum ModalDialogSize
     {
         /// <summary>
-        /// Маленький [sm]
-        /// </summary>
-        Small,
-        /// <summary>
         /// Нормальный
         /// </summary>
-        Default,
+        Default = 0,
+        /// <summary>
+        /// Маленький [sm]
+        /// </summary>
+        Small = 1,
         /// <summary>
         /// Большой [lg]
         /// </summary>
-        Large,
+        Large = 2,
         /// <summary>
         /// Очень большой [xl]
         /// </summary>
-        XL,
+        XL = 3,
     }
 }

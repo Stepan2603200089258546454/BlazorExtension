@@ -8,10 +8,10 @@
         /// <summary>
         /// Горизонтальное расположение вкладок
         /// </summary>
-        Horizontal,
+        Horizontal = 0,
         /// <summary>
         /// Вертикальное расположение вкладок
         /// </summary>
-        Vertical,
+        Vertical = 1,
     }
 }

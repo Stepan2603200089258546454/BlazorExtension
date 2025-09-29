@@ -8,30 +8,30 @@
         /// <summary>
         /// Выключен
         /// </summary>
-        Default,
+        Default = 0,
         /// <summary>
         /// Всегда [modal-fullscreen]
         /// </summary>
-        FullScreen,
+        FullScreen = 1,
         /// <summary>
         /// [modal-fullscreen-sm-down]
         /// </summary>
-        SM,
+        SM = 2,
         /// <summary>
         /// [modal-fullscreen-md-down]
         /// </summary>
-        MD,
+        MD = 3,
         /// <summary>
         /// [modal-fullscreen-lg-down]
         /// </summary>
-        LG,
+        LG = 4,
         /// <summary>
         /// [modal-fullscreen-xl-down]
         /// </summary>
-        XL,
+        XL = 5,
         /// <summary>
         /// [modal-fullscreen-xxl-down]
         /// </summary>
-        XXL,
+        XXL = 6,
     }
 }

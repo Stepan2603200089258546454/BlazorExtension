@@ -8,10 +8,10 @@
         /// <summary>
         /// Прокручиваемое модальное окно
         /// </summary>
-        Default,
+        Default = 0,
         /// <summary>
         /// Прокручиваемое содержимое модального окна
         /// </summary>
-        Scrollable,
+        Scrollable = 1,
     }
 }

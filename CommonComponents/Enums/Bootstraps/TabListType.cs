@@ -8,10 +8,10 @@
         /// <summary>
         /// Вкладки
         /// </summary>
-        Tab,
+        Tab = 0,
         /// <summary>
         /// Кнопки
         /// </summary>
-        Pill,
+        Pill = 1,
     }
 }

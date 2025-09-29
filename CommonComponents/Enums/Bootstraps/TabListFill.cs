@@ -8,14 +8,14 @@
         /// <summary>
         /// Выключено
         /// </summary>
-        Default,
+        Default = 0,
         /// <summary>
         /// Во всю ширину
         /// </summary>
-        Fill,
+        Fill = 1,
         /// <summary>
         /// Во всю ширину и одинаковые элементы по ширине
         /// </summary>
-        Justified
+        Justified = 2,
     }
 }

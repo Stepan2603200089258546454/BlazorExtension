@@ -14,10 +14,10 @@ namespace CommonComponents.Enums.Bootstraps
         /// <summary>
         /// Вверху экрана
         /// </summary>
-        Default,
+        Default = 0,
         /// <summary>
         /// По центру экрана
         /// </summary>
-        Center,
+        Center = 1,
     }
 }
