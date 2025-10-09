@@ -2,7 +2,7 @@
 
 namespace CommonComponents.Models.Bootstraps
 {
-    public abstract class BaseTabSettings
+    public abstract class BaseTabListSettings
     {
         /// <summary>
         /// id объекта

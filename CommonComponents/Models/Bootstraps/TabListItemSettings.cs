@@ -1,6 +1,6 @@
 ﻿namespace CommonComponents.Models.Bootstraps
 {
-    public class TabListItemSettings : BaseTabSettings
+    public class TabListItemSettings : BaseTabListSettings
     {
         /// <summary>
         /// Активная

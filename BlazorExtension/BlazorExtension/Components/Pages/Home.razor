@@ -44,6 +44,25 @@
     </BodyContent>
 </TabList>
 
+<Accordion Settings="AccordionSettings">
+    <AccordionItem Settings="@AccordionSettings.GetItemSettings("test-accordion-item-1", true)">
+        <HeaderContent>
+            item 1
+        </HeaderContent>
+        <BodyContent>
+            item 1 body
+        </BodyContent>
+    </AccordionItem>
+    <AccordionItem Settings="@AccordionSettings.GetItemSettings("test-accordion-item-2")">
+        <HeaderContent>
+            item 2
+        </HeaderContent>
+        <BodyContent>
+            item 2 body
+        </BodyContent>
+    </AccordionItem>
+</Accordion>
+
 @code {
     private DeviceInfoService test;
     [Inject]
@@ -74,6 +93,12 @@
         Type = TabListType.Pill,
         Fill = TabListFill.Default,
         Orientation = TabListOrientation.Horizontal
+    };
+    private AccordionSettings AccordionSettings = new AccordionSettings()
+    {
+        Id = "test-accordion",
+        Type = AccordionType.Default,
+        CollapsedType = AccordionCollapsedType.NoCollapsed
     };
 
     protected override async Task OnInitializedAsync()

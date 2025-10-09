@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CommonComponents.Models.Bootstraps
 {
-    public class TabListSettings : BaseTabSettings
+    public class TabListSettings : BaseTabListSettings
     {
         /// <summary>
         /// id контейнера содержимого вкладок
