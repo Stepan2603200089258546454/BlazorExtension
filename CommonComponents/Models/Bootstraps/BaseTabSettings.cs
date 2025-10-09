@@ -12,14 +12,5 @@ namespace CommonComponents.Models.Bootstraps
         /// Тип TabList элемента
         /// </summary>
         public TabListType Type { get; set; } = TabListType.Tab;
-        /// <summary>
-        /// Значение типа элемента
-        /// </summary>
-        public string TypeValue => Type switch
-        {
-            TabListType.Tab => "tab",
-            TabListType.Pill => "pill",
-            _ => "tab"
-        };
     }
 }

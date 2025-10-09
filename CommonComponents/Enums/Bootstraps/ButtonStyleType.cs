@@ -42,23 +42,7 @@ namespace CommonComponents.Enums.Bootstraps
         OutlineDark = 15,
         [StyleValue("btn btn-link")]
         Link = 16,
-    }
-    public enum ButtonType
-    {
-        [StringValue("button")]
-        Button = 0,
-        [StringValue("submit")]
-        Submit = 1,
-        [StringValue("reset")]
-        Reset = 2,
-    }
-    public enum ButtonSize
-    {
-        [StyleValue]
-        Default = 0,
-        [StyleValue("btn-lg")]
-        Large = 1,
-        [StyleValue("btn-sm")]
-        Small = 2,
+        [StyleValue("btn-close")]
+        Close = 17,
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace CommonComponents.Enums.Bootstraps
+﻿using CommonComponents.Enums.Exstension;
+
+namespace CommonComponents.Enums.Bootstraps
 {
     /// <summary>
     /// Настройки размера модального окна
@@ -8,18 +10,22 @@
         /// <summary>
         /// Нормальный
         /// </summary>
+        [StyleValue]
         Default = 0,
         /// <summary>
-        /// Маленький [sm]
+        /// Маленький
         /// </summary>
+        [StyleValue("modal-sm")]
         Small = 1,
         /// <summary>
-        /// Большой [lg]
+        /// Большой
         /// </summary>
+        [StyleValue("modal-lg")]
         Large = 2,
         /// <summary>
-        /// Очень большой [xl]
+        /// Очень большой
         /// </summary>
+        [StyleValue("modal-xl")]
         XL = 3,
     }
 }

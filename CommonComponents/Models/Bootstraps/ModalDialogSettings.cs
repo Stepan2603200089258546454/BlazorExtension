@@ -1,4 +1,5 @@
 ﻿using CommonComponents.Enums.Bootstraps;
+using CommonComponents.Enums.Exstension;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,6 @@ namespace CommonComponents.Models.Bootstraps
         /// Вычисляемое поле связки для браузера
         /// </summary>
         public string IdLabel => Id + "Label";
-        public string Title { get; set; } = "Заголовок";
         /// <summary>
         /// Настройки закрываемости при нажатии вне модального окна
         /// </summary>
@@ -27,88 +27,41 @@ namespace CommonComponents.Models.Bootstraps
         /// Настройки позиции модального окна
         /// </summary>
         public ModalDialogPosition Position { get; set; } = ModalDialogPosition.Default;
-        private string PositionValueStyle => Position switch
-        {
-            ModalDialogPosition.Default => string.Empty,
-            ModalDialogPosition.Center => "modal-dialog-centered",
-            _ => string.Empty,
-        };
         /// <summary>
         /// Настройки прокрутки модального окна
         /// </summary>
         public ModalDialogScrollable Scrollable { get; set; } = ModalDialogScrollable.Default;
-        private string ScrollableValueStyle => Scrollable switch
-        {
-            ModalDialogScrollable.Default => string.Empty,
-            ModalDialogScrollable.Scrollable => "modal-dialog-scrollable",
-            _ => string.Empty,
-        };
         /// <summary>
         /// Настройки размера модального окна
         /// </summary>
         public ModalDialogSize Size { get; set; } = ModalDialogSize.Default;
-        private string SizeValueStyle => Size switch
-        {
-            ModalDialogSize.Default => string.Empty,
-            ModalDialogSize.Large => "modal-lg",
-            ModalDialogSize.Small => "modal-sm",
-            ModalDialogSize.XL => "modal-xl",
-            _ => string.Empty,
-        };
         /// <summary>
         /// Настройки полноэкранного режима модального окна
         /// </summary>
         public ModalDialogFullScreen FullScreen { get; set; } = ModalDialogFullScreen.Default;
-        private string FullScreenValueStyle => FullScreen switch
-        {
-            ModalDialogFullScreen.Default => string.Empty,
-            ModalDialogFullScreen.FullScreen => "modal-fullscreen",
-            ModalDialogFullScreen.SM => "modal-fullscreen-sm-down",
-            ModalDialogFullScreen.MD => "modal-fullscreen-md-down",
-            ModalDialogFullScreen.LG => "modal-fullscreen-lg-down",
-            ModalDialogFullScreen.XL => "modal-fullscreen-xl-down",
-            ModalDialogFullScreen.XXL => "modal-fullscreen-xxl-down",
-            _ => string.Empty,
-        };
         /// <summary>
         /// Итоговые стили модального окна
         /// </summary>
-        public string ValueStyle => string.Join(' ', PositionValueStyle, ScrollableValueStyle, SizeValueStyle, FullScreenValueStyle);
-        /// <summary>
-        /// Включен ли футер модального окна
-        /// </summary>
-        public bool EnabledFooter { get; set; } = true;
-        /// <summary>
-        /// Включен ли заголовок модального окна
-        /// </summary>
-        public bool EnabledHeader { get; set; } = true;
+        public string Class => string.Join(' ', Position.GetStyleValue(), Scrollable.GetStyleValue(), Size.GetStyleValue(), FullScreen.GetStyleValue()).Trim();
         /// <summary>
         /// Включена ли кнопка закрытия в заголовке модального окна
         /// </summary>
         public bool EnabledButtonCancelHead { get; set; } = true;
         /// <summary>
-        /// Включена ли кнопка закрытия модального окна
+        /// Настройки кнопки в заголовке модального окна
         /// </summary>
-        public bool EnabledButtonCancel { get; set; } = true;
+        public ButtonSettings HeaderButtonCancelSettings { get; set; } = ButtonSettings.GetPresetCloseModal(string.Empty, ButtonStyleType.Close);
         /// <summary>
-        /// Текст кнопки закрытия модального окна
+        /// Настройки кнопки закрытия модального окна
         /// </summary>
-        public string TextButtonCancel { get; set; } = "Закрыть";
+        public ButtonSettings ButtonCancelSettings { get; set; } = ButtonSettings.GetPresetCloseModal(string.Empty, ButtonStyleType.Secondary);
         /// <summary>
-        /// Включена ли кнопка подтверждения модального окна
+        /// Настройки кнопки подтверждения модального окна
         /// </summary>
-        public bool EnabledButtonOk { get; set; } = true;
+        public ButtonSettings ButtonOkSettings { get; set; } = ButtonSettings.GetPresetCloseModal(string.Empty, ButtonStyleType.Primary);
         /// <summary>
-        /// Текст кнопки подтверждения модального окна
+        /// Настройки кнопки отклонения модального окна
         /// </summary>
-        public string TextButtonOk { get; set; } = "Да";
-        /// <summary>
-        /// Включена ли кнопка отказа модального окна
-        /// </summary>
-        public bool EnabledButtonNo { get; set; } = true;
-        /// <summary>
-        /// Текст кнопки отказа модального окна
-        /// </summary>
-        public string TextButtonNo { get; set; } = "Нет";
+        public ButtonSettings ButtonNoSettings { get; set; } = ButtonSettings.GetPresetCloseModal(string.Empty, ButtonStyleType.Danger);
     }
 }

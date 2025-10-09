@@ -1,4 +1,6 @@
-﻿namespace CommonComponents.Enums.Bootstraps
+﻿using CommonComponents.Enums.Exstension;
+
+namespace CommonComponents.Enums.Bootstraps
 {
     /// <summary>
     /// Настройки полноэкранного режима модального окна
@@ -8,30 +10,37 @@
         /// <summary>
         /// Выключен
         /// </summary>
+        [StyleValue]
         Default = 0,
         /// <summary>
-        /// Всегда [modal-fullscreen]
+        /// Всегда
         /// </summary>
+        [StyleValue("modal-fullscreen")]
         FullScreen = 1,
         /// <summary>
-        /// [modal-fullscreen-sm-down]
+        /// 
         /// </summary>
+        [StyleValue("modal-fullscreen-sm-down")]
         SM = 2,
         /// <summary>
-        /// [modal-fullscreen-md-down]
+        /// 
         /// </summary>
+        [StyleValue("modal-fullscreen-md-down")]
         MD = 3,
         /// <summary>
-        /// [modal-fullscreen-lg-down]
+        /// 
         /// </summary>
+        [StyleValue("modal-fullscreen-lg-down")]
         LG = 4,
         /// <summary>
-        /// [modal-fullscreen-xl-down]
+        /// 
         /// </summary>
+        [StyleValue("modal-fullscreen-xl-down")] 
         XL = 5,
         /// <summary>
-        /// [modal-fullscreen-xxl-down]
+        /// 
         /// </summary>
+        [StyleValue("modal-fullscreen-xxl-down")] 
         XXL = 6,
     }
 }

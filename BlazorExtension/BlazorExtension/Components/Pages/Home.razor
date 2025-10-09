@@ -5,7 +5,15 @@
 <PageTitle>Главная</PageTitle>
 
 <ModalDialog Settings="ModalDialogSettings" OnResult="CallBackModal">
-    <p>Modal</p>
+    <HeaderContent>
+        Модальное окно
+    </HeaderContent>
+    <BodyContent>
+        Тело модального окна
+    </BodyContent>
+    <ButtonOkContent>Принять</ButtonOkContent>
+    <ButtonNoContent>Отклонить</ButtonNoContent>
+    <ButtonCancelContent>Закрыть</ButtonCancelContent>
 </ModalDialog>
 
 <h1>Привет, мир! [@RendererInfo.Name]</h1>
@@ -13,7 +21,7 @@
 Добро пожаловать в ваше новое приложение.
 
 <div class="mb-3">
-    <Button Settings="ButtonSettings" OnClick="Invoke1">Custom button</Button>
+    <Button Settings="ButtonSettings">Custom button</Button>
     <button class="btn btn-primary" @onclick="Invoke1">JS 1</button>
     <button class="btn btn-primary" @onclick="Invoke2">JS 2</button>
 </div>
@@ -45,9 +53,20 @@
     [CascadingParameter]
     public HttpContext? HttpContext { get; set; }
 
+    private ButtonSettings ButtonSettings = new ButtonSettings()
+    {
+        Id = "test-btn",
+        AttributeSettings = new ButtonAttributeSettings().OpenModal("modal"),
+    };
     private ModalDialogSettings ModalDialogSettings = new ModalDialogSettings()
     {
-        Id = "modal"
+        Id = "modal",
+        ButtonOkSettings = new ButtonSettings()
+        {
+            Id = string.Empty,
+            StyleType = ButtonStyleType.OutlinePrimary,
+            AttributeSettings = new ButtonAttributeSettings().CloseModal()
+        }
     };
     private TabListSettings TabListSettings = new TabListSettings()
     {
@@ -56,15 +75,10 @@
         Fill = TabListFill.Default,
         Orientation = TabListOrientation.Horizontal
     };
-    private ButtonSettings ButtonSettings = new ButtonSettings()
-    {
-        Id = "test-btn"
-    };
 
     protected override async Task OnInitializedAsync()
     {
         test = new DeviceInfoService(js);
-
         var deviceInformation = test.GetDeviceInfo(HttpContext);
         await base.OnInitializedAsync();
     }

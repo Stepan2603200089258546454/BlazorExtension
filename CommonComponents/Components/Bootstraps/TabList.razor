@@ -1,5 +1,5 @@
-﻿<div class="@(Settings.Orientation == TabListOrientation.Vertical ? "d-flex align-items-start" : string.Empty)">
-    <ul class="@Settings.Class" id="@Settings.Id" role="tablist" aria-orientation="@Settings.OrientationValue">
+﻿<div class="@Settings.Orientation.GetAttributeValue("div class")">
+    <ul class="@Settings.Class" id="@Settings.Id" role="tablist" aria-orientation="@Settings.Orientation.GetAttributeValue("aria-orientation")">
         @HeaderContent
     </ul>
     <div class="tab-content" id="@Settings.IdContent">
@@ -7,13 +7,3 @@
     </div>
 </div>
 
-@code {
-
-    [Parameter, EditorRequired]
-    public TabListSettings Settings { get; set; }
-
-    [Parameter, EditorRequired]
-    public RenderFragment? HeaderContent { get; set; }
-    [Parameter, EditorRequired]
-    public RenderFragment? BodyContent { get; set; }
-}

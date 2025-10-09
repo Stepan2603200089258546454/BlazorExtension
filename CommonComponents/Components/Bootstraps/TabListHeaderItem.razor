@@ -1,7 +1,7 @@
 ﻿<li class="nav-item" role="presentation">
     <button class="@Settings.HeaderClass"
             id="@Settings.HeaderId"
-            data-bs-toggle="@Settings.TypeValue"
+            data-bs-toggle="@Settings.Type.GetAttributeValue("data-bs-toggle")"
             data-bs-target="#@Settings.BodyId"
             type="button"
             role="tab"
@@ -11,9 +11,3 @@
     </button>
 </li>
 
-@code {
-    [Parameter, EditorRequired]
-    public TabListItemSettings Settings { get; set; }
-    [Parameter, EditorRequired]
-    public RenderFragment ChildContent { get; set; }
-}

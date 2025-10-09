@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonComponents.Enums.Exstension;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,10 +15,12 @@ namespace CommonComponents.Enums.Bootstraps
         /// <summary>
         /// Вверху экрана
         /// </summary>
+        [StyleValue]
         Default = 0,
         /// <summary>
         /// По центру экрана
         /// </summary>
+        [StyleValue("modal-dialog-centered")]
         Center = 1,
     }
 }

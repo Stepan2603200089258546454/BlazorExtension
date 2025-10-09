@@ -11,17 +11,37 @@ namespace CommonComponents.Components.Bootstraps
     public partial class ModalDialog : ComponentBase
     {
         /// <summary>
-        /// Содержимое модального окна
+        /// Содержимое заголовка модального окна
         /// </summary>
         [Parameter]
-        public RenderFragment? ChildContent { get; set; }
+        public RenderFragment? HeaderContent { get; set; }
+        /// <summary>
+        /// Содержимое модального окна
+        /// </summary>
+        [Parameter, EditorRequired]
+        public RenderFragment BodyContent { get; set; }
+        /// <summary>
+        /// Содержимое кнопки подтверждения модального окна
+        /// </summary>
+        [Parameter]
+        public RenderFragment? ButtonOkContent { get; set; }
+        /// <summary>
+        /// Содержимое кнопки отклонения модального окна
+        /// </summary>
+        [Parameter]
+        public RenderFragment? ButtonNoContent { get; set; }
+        /// <summary>
+        /// Содержимое кнопки закрытия модального окна
+        /// </summary>
+        [Parameter]
+        public RenderFragment? ButtonCancelContent { get; set; }
         /// <summary>
         /// Настройки модального окна
         /// </summary>
         [Parameter, EditorRequired]
         public ModalDialogSettings Settings { get; set; }
         /// <summary>
-        /// Нажата кнопка [подтверждения=true, отказа=false, закрытия=null]
+        /// Нажата кнопка [Подтверждения=true, Отказа=false, Закрытия=null]
         /// </summary>
         [Parameter]
         public EventCallback<bool?> OnResult { get; set; }

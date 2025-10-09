@@ -1,40 +1,49 @@
-﻿
-<!-- Модальное окно -->
+﻿<!-- Модальное окно -->
 <div class="modal fade" id="@Settings.Id"
-     data-bs-backdrop="@(Settings.Backdrop == ModalDialogBackdrop.Static ? "static" : "dynamic")"
-     data-bs-keyboard="@(Settings.Backdrop == ModalDialogBackdrop.Static ? "false" : "true")"
+     data-bs-backdrop="@Settings.Backdrop.GetAttributeValue("data-bs-backdrop")"
+     data-bs-keyboard="@Settings.Backdrop.GetAttributeValue("data-bs-keyboard")"
      tabindex="-1"
      aria-labelledby="@Settings.IdLabel"
      aria-hidden="true">
-    <div class="modal-dialog @Settings.ValueStyle ">
+    <div class="modal-dialog @Settings.Class">
         <div class="modal-content">
-            @if (Settings.EnabledHeader)
+            @if (HeaderContent is not null)
             {
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="@Settings.IdLabel">@Settings.Title</h1>
+                    <h1 class="modal-title fs-5" id="@Settings.IdLabel">
+                        @HeaderContent
+                    </h1>
                     @if (Settings.EnabledButtonCancelHead)
                     {
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть" @onclick="Cancel" />
+                        <Button Settings="Settings.HeaderButtonCancelSettings" OnClick="Cancel">
+                            @string.Empty
+                        </Button>
                     }
                 </div>
             }
             <div class="modal-body">
-                @ChildContent
+                @BodyContent
             </div>
-            @if (Settings.EnabledFooter)
+            @if (ButtonCancelContent is not null || ButtonNoContent is not null || ButtonOkContent is not null)
             {
                 <div class="modal-footer">
-                    @if (Settings.EnabledButtonCancel)
+                    @if (ButtonCancelContent is not null)
                     {
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="Cancel">@Settings.TextButtonCancel</button>
+                        <Button Settings="Settings.ButtonCancelSettings" OnClick="Cancel">
+                            @ButtonCancelContent
+                        </Button>
                     }
-                    @if (Settings.EnabledButtonNo)
+                    @if (ButtonNoContent is not null)
                     {
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="No">@Settings.TextButtonNo</button>
+                        <Button Settings="Settings.ButtonNoSettings" OnClick="No">
+                            @ButtonNoContent
+                        </Button>
                     }
-                    @if (Settings.EnabledButtonOk)
+                    @if (ButtonOkContent is not null)
                     {
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="Ok">@Settings.TextButtonOk</button>
+                        <Button Settings="Settings.ButtonOkSettings" OnClick="Ok">
+                            @ButtonOkContent
+                        </Button>
                     }
                 </div>
             }
