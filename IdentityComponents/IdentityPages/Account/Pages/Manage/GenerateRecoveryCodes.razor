@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.AccountManage.GenerateRecoveryCodes)]
-
-@inject IAccountManager AccountManager
-
-<PageTitle>Генерация кодов восстановления двухфакторной аутентификации (2FA)</PageTitle>
+﻿<PageTitle>Генерация кодов восстановления двухфакторной аутентификации (2FA)</PageTitle>
 
 @if (recoveryCodes is not null)
 {
@@ -22,7 +18,8 @@ else
         </p>
         <p>
             Генерация новых кодов восстановления не изменяет ключи, используемые в приложениях аутентификации. Если вы хотите изменить ключ,
-            используемый в приложении аутентификации, вам следует <a href="@IdentityConst.IdentityRoute.AccountManage.ResetAuthenticator">сбросить ключи аутентификации</a>.
+            используемый в приложении аутентификации, вам следует
+            <a href="@IdentityConst.IdentityRoute.AccountManage.ResetAuthenticator">сбросить ключи аутентификации</a>.
         </p>
     </div>
 
@@ -32,22 +29,4 @@ else
             <button class="btn btn-danger" type="submit">Генерация кодов восстановления</button>
         </form>
     </div>
-}
-
-@code {
-    private ApplicationUser user = default!;
-    private IEnumerable<string>? recoveryCodes;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    protected override async Task OnInitializedAsync()
-    {
-        user = await AccountManager.GenerateRecoveryCodesOnInitializedAsync(HttpContext);
-    }
-
-    private async Task OnSubmitAsync()
-    {
-        recoveryCodes = await AccountManager.GenerateRecoveryCodesOnSubmitAsync(user);
-    }
 }

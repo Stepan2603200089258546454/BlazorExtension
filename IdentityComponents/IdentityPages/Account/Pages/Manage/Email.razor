@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.AccountManage.Email)]
-
-@inject IAccountManager AccountManager
-
-<PageTitle>Управление электронной почтой</PageTitle>
+﻿<PageTitle>Управление электронной почтой</PageTitle>
 
 <h3>Управление электронной почтой</h3>
 
@@ -47,36 +43,3 @@
         </EditForm>
     </div>
 </div>
-
-@code {
-    private string? message;
-    private ApplicationUser user = default!;
-    private string? email;
-    private bool isEmailConfirmed;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromForm(FormName = "change-email")]
-    private NewEmailInputModel Input { get; set; } = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        (ApplicationUser user, string? email, bool isEmailConfirmed) initValue = await AccountManager.EmailOnInitializedAsync(HttpContext);
-        user = initValue.user;
-        email = initValue.email;
-        isEmailConfirmed = initValue.isEmailConfirmed;
-
-        Input.NewEmail ??= email;
-    }
-
-    private async Task OnValidSubmitAsync()
-    {
-        await AccountManager.EmailOnValidSubmitAsync(user, Input, email);
-    }
-
-    private async Task OnSendEmailVerificationAsync()
-    {
-        await AccountManager.EmailOnSendEmailVerificationAsync(user, email);
-    }
-}

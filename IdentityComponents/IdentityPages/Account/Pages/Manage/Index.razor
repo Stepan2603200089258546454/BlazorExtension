@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.AccountManage.Index)]
-
-@inject IAccountManager AccountManager
-
-<PageTitle>Профиль</PageTitle>
+﻿<PageTitle>Профиль</PageTitle>
 
 <h3>Профиль</h3>
 
@@ -26,30 +22,3 @@
         </EditForm>
     </div>
 </div>
-
-@code {
-    private ApplicationUser user = default!;
-    private string? username;
-    private string? phoneNumber;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromForm]
-    private ManageIndexInputModel Input { get; set; } = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        var res = await AccountManager.ManageIndexOnInitializedAsync(HttpContext);
-        user = res.user;
-        username = res.username;
-        phoneNumber = res.phoneNumber;
-
-        Input.PhoneNumber ??= phoneNumber;
-    }
-
-    private async Task OnValidSubmitAsync()
-    {
-        await AccountManager.ManageIndexOnValidSubmitAsync(HttpContext, Input, user, phoneNumber);
-    }
-}

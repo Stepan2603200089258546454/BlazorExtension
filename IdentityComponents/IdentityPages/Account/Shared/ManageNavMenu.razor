@@ -1,7 +1,4 @@
-﻿@inject SignInManager<ApplicationUser> SignInManager
-
-<ul class="nav nav-pills flex-column">
-    
+﻿<ul class="nav nav-pills flex-column">
     <li class="nav-item">
         <NavLink class="nav-link" href="@IdentityConst.IdentityRoute.AccountManage.Index" Match="NavLinkMatch.All">Профиль</NavLink>
     </li>
@@ -27,12 +24,3 @@
         <NavLink class="nav-link" href="Home">Главная</NavLink>
     </li>
 </ul>
-
-@code {
-    private bool hasExternalLogins;
-
-    protected override async Task OnInitializedAsync()
-    {
-        hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
-    }
-}

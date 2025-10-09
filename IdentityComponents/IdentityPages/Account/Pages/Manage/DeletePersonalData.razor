@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.AccountManage.DeletePersonalData)]
-
-@inject IAccountManager AccountManager
-
-<PageTitle>Удалить персональные данные</PageTitle>
+﻿<PageTitle>Удалить персональные данные</PageTitle>
 
 <StatusMessage Message="@AccountManager.Message" />
 
@@ -30,27 +26,3 @@
         <button class="btn btn-danger" type="submit">Удалить данные и закрыть мой аккаунт</button>
     </EditForm>
 </div>
-
-@code {
-    private ApplicationUser user = default!;
-    private bool requirePassword;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromForm]
-    private DeletePersonalDataInputModel Input { get; set; } = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        Input ??= new();
-        (ApplicationUser user, bool requirePassword) initValue = await AccountManager.DeletePersonalDataOnInitializedAsync(HttpContext);
-        user = initValue.user;
-        requirePassword = initValue.requirePassword;
-    }
-
-    private async Task OnValidSubmitAsync()
-    {
-        await AccountManager.DeletePersonalDataOnValidSubmitAsync(user, requirePassword, Input);
-    }
-}

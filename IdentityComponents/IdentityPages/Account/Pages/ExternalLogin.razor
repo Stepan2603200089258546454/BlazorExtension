@@ -1,16 +1,14 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.Account.ExternalLogin)]
-
-@inject IUserManager UserManager
-
-<PageTitle>Зарегистрироваться</PageTitle>
+﻿<PageTitle>Зарегистрироваться</PageTitle>
 
 <StatusMessage Message="@UserManager.Message" />
 
 <h1>Зарегистрироваться</h1>
+
 <h2>Свяжите свою учетную запись @ProviderDisplayName.</h2>
+
 <hr />
 
-<div  class="alert alert-info">
+<div class="alert alert-info">
     Вы успешно прошли аутентификацию с помощью <strong>@ProviderDisplayName</strong>.
     Введите адрес электронной почты для этого сайта ниже и нажмите кнопку «Зарегистрироваться», чтобы завершить вход.
 </div>
@@ -21,7 +19,8 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert" />
             <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="email" placeholder="Пожалуйста, введите свой адрес электронной почты." />
+                <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="email"
+                           placeholder="Пожалуйста, введите свой адрес электронной почты." />
                 <label for="Input.Email" class="form-label">Электронная почта</label>
                 <ValidationMessage For="() => Input.Email" />
             </div>
@@ -29,34 +28,3 @@
         </EditForm>
     </div>
 </div>
-
-@code {
-    private ExternalLoginInfo? externalLoginInfo;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromForm]
-    private EmailInputModel Input { get; set; } = new();
-
-    [SupplyParameterFromQuery]
-    private string? RemoteError { get; set; }
-
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
-
-    [SupplyParameterFromQuery]
-    private string? Action { get; set; }
-
-    private string? ProviderDisplayName => externalLoginInfo?.ProviderDisplayName;
-
-    protected override async Task OnInitializedAsync()
-    {
-        externalLoginInfo = await UserManager.ExternalLoginPageAsync(HttpContext, RemoteError, Action, ReturnUrl, Input);
-    }
-
-    private async Task OnValidSubmitAsync()
-    {
-        await UserManager.OnExternalLoginValidSubmitAsync(HttpContext, externalLoginInfo, ReturnUrl, Input);
-    }
-}

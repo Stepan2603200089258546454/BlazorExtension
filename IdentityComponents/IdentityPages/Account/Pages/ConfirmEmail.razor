@@ -1,25 +1,6 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.Account.ConfirmEmail)]
-
-@inject IUserManager UserManager
-
-<PageTitle>Подтвердите адрес электронной почты</PageTitle>
+﻿<PageTitle>Подтвердите адрес электронной почты</PageTitle>
 
 <h1>Подтвердите адрес электронной почты</h1>
 
 <StatusMessage Message="@UserManager.Message" />
 
-@code {
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromQuery]
-    private string? UserId { get; set; }
-
-    [SupplyParameterFromQuery]
-    private string? Code { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await UserManager.ConfirmEmailPageAsync(HttpContext, UserId, Code);
-    }
-}

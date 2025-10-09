@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.AccountManage.ResetAuthenticator)]
-
-@inject IAccountManager AccountManager
-
-<PageTitle>Сброс ключа аутентификатора</PageTitle>
+﻿<PageTitle>Сброс ключа аутентификатора</PageTitle>
 
 <StatusMessage />
 
@@ -25,13 +21,3 @@
         <button class="btn btn-danger" type="submit">Сброс ключа аутентификатора</button>
     </form>
 </div>
-
-@code {
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    private async Task OnSubmitAsync()
-    {
-        await AccountManager.ResetAuthenticatorOnSubmitAsync(HttpContext);
-    }
-}

@@ -304,7 +304,7 @@ namespace DataContext.IdentityServices
                 RedirectManager.RedirectToCurrentPageWithStatus("Ошибка: внешний логин не был добавлен. Внешние логины могут быть связаны только с одной учётной записью.", HttpContext);
             }
             // Очистите существующий внешний cookie-файл, чтобы обеспечить чистый процесс входа в систему
-            await HttpContext.SignOutAsync(Microsoft.AspNetCore.Identity.IdentityConstants.ExternalScheme);
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
             RedirectManager.RedirectToCurrentPageWithStatus("Добавлен внешний вход в систему.", HttpContext);
         }

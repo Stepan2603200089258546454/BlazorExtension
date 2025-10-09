@@ -1,10 +1,7 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.Account.Login)]
-
-@inject IUserManager UserManager
-
-<PageTitle>Авторизоваться</PageTitle>
+﻿<PageTitle>Авторизоваться</PageTitle>
 
 <h1>Авторизоваться</h1>
+
 <div class="row">
     <div class="col-lg-6">
         <section>
@@ -41,9 +38,7 @@
                         <a href="@IdentityConst.IdentityRoute.Account.ForgotPassword">Забыли пароль?</a>
                     </p>
                     <p>
-                        <a href="@UserManager.GetUrlAccountRegister(ReturnUrl)">
-                            Зарегистрируйтесь как новый пользователь
-                        </a>
+                        <a href="@UrlAccountRegister">Зарегистрируйтесь как новый пользователь</a>
                     </p>
                     <p>
                         <a href="@IdentityConst.IdentityRoute.Account.ResendEmailConfirmation">Повторно отправить подтверждение по электронной почте</a>
@@ -60,24 +55,3 @@
         </section>
     </div>
 </div>
-
-@code {
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromForm]
-    private LoginInputModel Input { get; set; } = new();
-
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await UserManager.IsGetSignOutAsync(HttpContext);
-    }
-
-    public async Task LoginUser()
-    {
-        await UserManager.LoginUser(Input, ReturnUrl);
-    }
-}

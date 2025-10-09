@@ -1,28 +1,6 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.Account.ConfirmEmailChange)]
-
-@inject IUserManager UserManager
-
-<PageTitle>Подтвердить изменение адреса электронной почты</PageTitle>
+﻿<PageTitle>Подтвердить изменение адреса электронной почты</PageTitle>
 
 <h1>Подтвердить изменение адреса электронной почты</h1>
 
 <StatusMessage Message="@UserManager.Message" />
 
-@code {
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromQuery]
-    private string? UserId { get; set; }
-
-    [SupplyParameterFromQuery]
-    private string? Email { get; set; }
-
-    [SupplyParameterFromQuery]
-    private string? Code { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await UserManager.ConfirmEmailChangePageAsync(HttpContext, UserId, Email, Code);
-    }
-}

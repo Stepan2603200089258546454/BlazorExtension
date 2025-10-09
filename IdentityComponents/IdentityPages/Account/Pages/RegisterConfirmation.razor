@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.Account.RegisterConfirmation)]
-
-@inject IUserManager UserManager
-
-<PageTitle>Подтверждение регистрации</PageTitle>
+﻿<PageTitle>Подтверждение регистрации</PageTitle>
 
 <h1>Подтверждение регистрации</h1>
 
@@ -21,20 +17,3 @@ else
     <p role="alert">Пожалуйста, проверьте свою электронную почту, чтобы подтвердить свою учетную запись.</p>
 }
 
-@code {
-    private string? emailConfirmationLink;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromQuery]
-    private string? Email { get; set; }
-
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        emailConfirmationLink = await UserManager.RegisterConfirmationPageAsync(HttpContext, Email, ReturnUrl);
-    }
-}

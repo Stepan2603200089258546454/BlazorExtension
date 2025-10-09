@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.AccountManage.Disable2fa)]
-
-@inject IAccountManager AccountManager
-
-<PageTitle>Отключить двухфакторную аутентификацию (2FA)</PageTitle>
+﻿<PageTitle>Отключить двухфакторную аутентификацию (2FA)</PageTitle>
 
 <StatusMessage />
 
@@ -14,7 +10,8 @@
     </p>
     <p>
         Отключение двухфакторной аутентификации не меняет ключи, используемые в приложениях аутентификации. Если вы хотите изменить ключ,
-        используемый в приложении аутентификации, вам следует <a href="@IdentityConst.IdentityRoute.AccountManage.ResetAuthenticator">сбросить ключи аутентификации</a>.
+        используемый в приложении аутентификации, вам следует 
+        <a href="@IdentityConst.IdentityRoute.AccountManage.ResetAuthenticator">сбросить ключи аутентификации</a>.
     </p>
 </div>
 
@@ -24,20 +21,3 @@
         <button class="btn btn-danger" type="submit">Отключить 2FA</button>
     </form>
 </div>
-
-@code {
-    private ApplicationUser user = default!;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    protected override async Task OnInitializedAsync()
-    {
-        user = await AccountManager.Disable2faOnInitializedAsync(HttpContext);
-    }
-
-    private async Task OnSubmitAsync()
-    {
-        await AccountManager.Disable2faOnSubmitAsync(HttpContext, user);
-    }
-}

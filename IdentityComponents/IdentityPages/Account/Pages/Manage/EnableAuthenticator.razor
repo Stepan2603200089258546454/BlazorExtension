@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.AccountManage.EnableAuthenticator)]
-
-@inject IAccountManager AccountManager
-
-<PageTitle>Настроить приложение аутентификации</PageTitle>
+﻿<PageTitle>Настроить приложение аутентификации</PageTitle>
 
 @if (recoveryCodes is not null)
 {
@@ -58,28 +54,3 @@ else
     </div>
 }
 
-@code {
-    private ApplicationUser user = default!;
-    private string? sharedKey;
-    private string? authenticatorUri;
-    private IEnumerable<string>? recoveryCodes;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromForm]
-    private EnableAuthenticatorInputModel Input { get; set; } = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        (ApplicationUser user, string sharedKey, string authenticatorUri) res = await AccountManager.EnableAuthenticatorOnInitializedAsync(HttpContext);
-        user = res.user;
-        sharedKey = res.sharedKey;
-        authenticatorUri = res.authenticatorUri;
-    }
-
-    private async Task OnValidSubmitAsync()
-    {
-        recoveryCodes = await AccountManager.EnableAuthenticatorOnValidSubmitAsync(HttpContext, Input, user);
-    }
-}

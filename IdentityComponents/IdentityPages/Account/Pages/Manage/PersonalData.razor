@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.AccountManage.PersonalData)]
-
-@inject IAccountManager AccountManager
-
-<PageTitle>Персональные данные</PageTitle>
+﻿<PageTitle>Персональные данные</PageTitle>
 
 <StatusMessage />
 
@@ -25,13 +21,3 @@
         </p>
     </div>
 </div>
-
-@code {
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await AccountManager.PersonalDataOnInitializedAsync(HttpContext);
-    }
-}

@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.AccountManage.TwoFactorAuthentication)]
-
-@inject IAccountManager AccountManager
-
-<PageTitle>Двухфакторная аутентификация (2FA)</PageTitle>
+﻿<PageTitle>Двухфакторная аутентификация (2FA)</PageTitle>
 
 <StatusMessage />
 
@@ -75,30 +71,4 @@ else
         <strong>Политика конфиденциальности и использования файлов cookie не принята.</strong>
         <p>Вы должны принять политику, прежде чем сможете включить двухфакторную аутентификацию.</p>
     </div>
-}
-
-@code {
-    private bool canTrack;
-    private bool hasAuthenticator;
-    private int recoveryCodesLeft;
-    private bool is2faEnabled;
-    private bool isMachineRemembered;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    protected override async Task OnInitializedAsync()
-    {
-        var res = await AccountManager.TwoFactorAuthenticationOnInitializedAsync(HttpContext);
-        canTrack = res.canTrack;
-        hasAuthenticator = res.hasAuthenticator;
-        is2faEnabled = res.is2faEnabled;
-        isMachineRemembered = res.isMachineRemembered;
-        recoveryCodesLeft = res.recoveryCodesLeft;
-    }
-
-    private async Task OnSubmitForgetBrowserAsync()
-    {
-        await AccountManager.TwoFactorAuthenticationOnSubmitForgetBrowserAsync(HttpContext);
-    }
 }

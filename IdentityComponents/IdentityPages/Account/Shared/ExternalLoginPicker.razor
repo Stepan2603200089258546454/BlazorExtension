@@ -1,11 +1,8 @@
-﻿
-@inject IUserManager UserManager
-
-@if (externalLogins.Count() == 0)
+﻿@if (externalLogins.Count() == 0)
 {
     <div>
         <p>
-            Внешние службы аутентификации не настроены. См. эту 
+            Внешние службы аутентификации не настроены. См. эту
             <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
                 статью о настройке этого приложения ASP.NET для поддержки входа через внешние службы
             </a>.
@@ -21,7 +18,7 @@ else
             <p>
                 @foreach (var provider in externalLogins)
                 {
-                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" 
+                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name"
                             title="Войдите, используя свой @provider.DisplayName аккаунт">
                         @provider.DisplayName
                     </button>
@@ -29,16 +26,4 @@ else
             </p>
         </div>
     </form>
-}
-
-@code {
-    private IEnumerable<AuthenticationScheme> externalLogins = [];
-
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        externalLogins = await UserManager.GetExternalAuthenticationSchemesAsync();
-    }
 }

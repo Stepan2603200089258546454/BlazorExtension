@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.AccountManage.ExternalLogins)]
-
-@inject IAccountManager AccountManager
-
-<PageTitle>Управляйте внешними логинами</PageTitle>
+﻿<PageTitle>Управляйте внешними логинами</PageTitle>
 
 <StatusMessage />
 
@@ -38,6 +34,7 @@
         </tbody>
     </table>
 }
+
 @if (otherLogins?.Count > 0)
 {
     <h4>Добавьте еще одну услугу для входа.</h4>
@@ -55,37 +52,4 @@
             </p>
         </div>
     </form>
-}
-
-@code {
-    private ApplicationUser user = default!;
-    private IList<UserLoginInfo>? currentLogins;
-    private IList<AuthenticationScheme>? otherLogins;
-    private bool showRemoveButton;
-
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
-
-    [SupplyParameterFromForm]
-    private string? LoginProvider { get; set; }
-
-    [SupplyParameterFromForm]
-    private string? ProviderKey { get; set; }
-
-    [SupplyParameterFromQuery]
-    private string? Action { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        var res = await AccountManager.ExternalLoginsOnInitializedAsync(HttpContext, Action);
-        user = res.user;
-        currentLogins = res.currentLogins;
-        otherLogins = res.otherLogins;
-        showRemoveButton = res.showRemoveButton;
-    }
-
-    private async Task OnSubmitAsync()
-    {
-        await AccountManager.ExternalLoginsOnSubmitAsync(HttpContext, user, LoginProvider, ProviderKey);
-    }
 }

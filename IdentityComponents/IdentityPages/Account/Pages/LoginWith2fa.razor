@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.Account.LoginWith2fa)]
-
-@inject IUserManager UserManager
-
-<PageTitle>Двухфакторная аутентификация</PageTitle>
+﻿<PageTitle>Двухфакторная аутентификация</PageTitle>
 
 <h1>Двухфакторная аутентификация</h1>
 <hr />
@@ -10,6 +6,7 @@
 <StatusMessage Message="@UserManager.Message" />
 
 <p>Ваш вход защищён приложением-аутентификатором. Введите код аутентификатора ниже.</p>
+
 <div class="row">
     <div class="col-md-4">
         <EditForm Model="Input" FormName="login-with-2fa" OnValidSubmit="OnValidSubmitAsync" method="post">
@@ -38,27 +35,3 @@
     Нет доступа к устройству аутентификации? Вы можете
     <a href="@(IdentityConst.IdentityRoute.Account.LoginWithRecoveryCode)?ReturnUrl=@ReturnUrl">войти с помощью кода восстановления</a>.
 </p>
-
-@code {
-    private ApplicationUser user = default!;
-
-    [SupplyParameterFromForm]
-    private TwoFactorCodeInputModel Input { get; set; } = new();
-
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
-
-    [SupplyParameterFromQuery]
-    private bool RememberMe { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Убедитесь, что пользователь сначала прошел через экран ввода имени пользователя и пароля
-        user = await UserManager.GetTwoFactorAuthenticationUserAsync();
-    }
-
-    private async Task OnValidSubmitAsync()
-    {
-        await UserManager.OnLoginWith2faValidSubmitAsync(user, Input, RememberMe, ReturnUrl);
-    }
-}

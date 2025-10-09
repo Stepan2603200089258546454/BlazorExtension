@@ -1,8 +1,4 @@
-﻿@attribute [Route(IdentityConst.IdentityRoute.Account.Register)]
-
-@inject IUserManager UserManager
-
-<PageTitle>Зарегистрироваться</PageTitle>
+﻿<PageTitle>Зарегистрироваться</PageTitle>
 
 <h1>Зарегистрироваться</h1>
 
@@ -45,16 +41,3 @@
         </section>
     </div>
 </div>
-
-@code {
-    [SupplyParameterFromForm]
-    private RegisterInputModel Input { get; set; } = new();
-
-    [SupplyParameterFromQuery]
-    private string? ReturnUrl { get; set; }
-
-    public async Task RegisterUser(EditContext editContext)
-    {
-        await UserManager.RegisterUser(editContext, Input, ReturnUrl);
-    }
-}

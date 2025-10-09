@@ -45,7 +45,7 @@
             }
             public static class Admins
             {
-
+                public const string UserAndRoleEditor = "/Identity/Admin/UserAndRoleEditor";
             }
         }
     }
