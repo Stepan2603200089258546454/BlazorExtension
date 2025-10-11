@@ -14,12 +14,12 @@ namespace CommonComponents.Components.Bootstraps
         /// <summary>
         /// Настойки кнопки
         /// </summary>
-        [Parameter, EditorRequired]
-        public ButtonSettings Settings { get; set; }
+        [Parameter]
+        public ButtonSettings Settings { get; set; } = new ButtonSettings();
         /// <summary>
         /// Содержимое кнопки
         /// </summary>
-        [Parameter, EditorRequired]
+        [Parameter]
         public RenderFragment? ChildContent { get; set; }
         /// <summary>
         /// Нажатие на кнопку

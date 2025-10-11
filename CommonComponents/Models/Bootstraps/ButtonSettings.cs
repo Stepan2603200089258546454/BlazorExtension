@@ -10,6 +10,23 @@ namespace CommonComponents.Models.Bootstraps
 {
     public class ButtonSettings
     {
+        public static ButtonSettings GetPresetDefault(string id, ButtonStyleType StyleType = ButtonStyleType.Primary)
+        {
+            return new ButtonSettings()
+            {
+                Id = id,
+                StyleType = StyleType,
+            };
+        }
+        public static ButtonSettings GetPresetOpenModal(string id, string idModal, ButtonStyleType StyleType = ButtonStyleType.Primary)
+        {
+            return new ButtonSettings()
+            {
+                Id = id,
+                StyleType = StyleType,
+                AttributeSettings = new ButtonAttributeSettings().OpenModal(idModal)
+            };
+        }
         public static ButtonSettings GetPresetCloseModal(string Id, ButtonStyleType StyleType = ButtonStyleType.Primary)
         {
             return new ButtonSettings()
@@ -19,15 +36,26 @@ namespace CommonComponents.Models.Bootstraps
                 AttributeSettings = new ButtonAttributeSettings().CloseModal()
             };
         }
+        public static ButtonSettings GetPresetAccordionItemHeader(string HeaderClass, string Id, bool IsActive)
+        {
+            return new ButtonSettings()
+            {
+                Id = string.Empty,
+                StyleType = ButtonStyleType.Empty,
+                AddClass = HeaderClass,
+                Type = ButtonType.Button,
+                AttributeSettings = new ButtonAttributeSettings().AccordionItemHeader(Id, IsActive)
+            };
+        }
 
         /// <summary>
         /// Id модального окна
         /// </summary>
-        public required string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         /// <summary>
         /// Дополнительные стили (записываются в class)
         /// </summary>
-        public string AddClassesValue { get; set; } = string.Empty;
+        public string AddClass { get; set; } = string.Empty;
         /// <summary>
         /// Тип кнопки
         /// </summary>
@@ -45,6 +73,6 @@ namespace CommonComponents.Models.Bootstraps
         /// </summary>
         public ButtonAttributeSettings? AttributeSettings { get; set; }
 
-        public string Class => $"{StyleType.GetStyleValue()} {Size.GetStyleValue()} {AddClassesValue}".Trim();
+        public string Class => $"{StyleType.GetStyleValue()} {Size.GetStyleValue()} {AddClass}".Trim();
     }
 }

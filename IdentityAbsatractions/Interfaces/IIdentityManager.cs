@@ -67,11 +67,11 @@ namespace IdentityAbstractions.Interfaces
         /// <summary>
         /// Получение ролей пользователя
         /// </summary>
-        public Task<IList<string>> GetUserRolesAsync(string userId);
+        public Task<IList<ApplicationRole>> GetUserRolesAsync(string userId);
         /// <summary>
         /// Получение ролей пользователя
         /// </summary>
-        public Task<IList<string>> GetUserRolesAsync(ApplicationUser user);
+        public Task<IList<ApplicationRole>> GetUserRolesAsync(ApplicationUser user);
         /// <summary>
         /// Проверка наличия роли у пользователя
         /// </summary>
@@ -81,9 +81,17 @@ namespace IdentityAbstractions.Interfaces
         /// </summary>
         public Task<bool> AssignRolesToUserAsync(string userId, IEnumerable<string> rolesName);
         /// <summary>
+        /// Назначение роли пользователю
+        /// </summary>
+        public Task<bool> AssignRolesToUserAsync(ApplicationUser user, IEnumerable<string> rolesName);
+        /// <summary>
         /// Удаление роли у пользователя
         /// </summary>
         public Task<bool> RemoveRolesFromUserAsync(string userId, IEnumerable<string> rolesName);
+        /// <summary>
+        /// Удаление роли у пользователя
+        /// </summary>
+        public Task<bool> RemoveRolesFromUserAsync(ApplicationUser user, IEnumerable<string> rolesName);
         /// <summary>
         /// Создание роли
         /// </summary>
@@ -112,5 +120,13 @@ namespace IdentityAbstractions.Interfaces
         /// Получение свободных ролей для пользователя
         /// </summary>
         public Task<IList<ApplicationRole>> GetAvailableRolesForUserAsync(ApplicationUser user, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Обновить название роли
+        /// </summary>
+        public Task<bool> UpdateRoleAsync(string roleId, string roleName);
+        /// <summary>
+        /// Обновить название роли
+        /// </summary>
+        public Task<bool> UpdateRoleAsync(ApplicationRole role, string roleName);
     }
 }

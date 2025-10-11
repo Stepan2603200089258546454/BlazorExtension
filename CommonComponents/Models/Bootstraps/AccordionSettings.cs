@@ -10,15 +10,26 @@ namespace CommonComponents.Models.Bootstraps
 {
     public class AccordionSettings
     {
-        public required string Id { get; set; }
-        public AccordionType Type { get; set; } = AccordionType.Default;
+        public string Id { get; set; } = string.Empty;
+        /// <summary>
+        /// Стили
+        /// </summary>
+        public AccordionStyleType StyleType { get; set; } = AccordionStyleType.Default;
+        /// <summary>
+        /// Тип открываемости
+        /// </summary>
         public AccordionCollapsedType CollapsedType { get; set; } = AccordionCollapsedType.Collapsed;
-
-        public string Class => $"accordion {Type.GetStyleValue()}".Trim();
+        /// <summary>
+        /// Итоговые стили
+        /// </summary>
+        public string Class => $"{StyleType.GetStyleValue()}".Trim();
 
         public AccordionItemSettings GetItemSettings(string id, bool isActive = false)
         {
-            return new AccordionItemSettings(id, CollapsedType == AccordionCollapsedType.Collapsed ? Id : string.Empty, isActive);
+            return new AccordionItemSettings(
+                id, 
+                CollapsedType == AccordionCollapsedType.Collapsed ? Id : string.Empty, 
+                isActive);
         }
     }
 }

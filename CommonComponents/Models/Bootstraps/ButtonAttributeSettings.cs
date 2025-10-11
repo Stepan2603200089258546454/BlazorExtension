@@ -26,6 +26,10 @@
             }
             return this;
         }
+        public ButtonAttributeSettings AddAriaLabel(string value)
+        {
+            return AddValue("aria-label", value);
+        }
         /// <summary>
         /// Добавляет атрибуты открытия модального окна
         /// </summary>
@@ -39,6 +43,23 @@
         public ButtonAttributeSettings CloseModal()
         {
             return AddValue("data-bs-dismiss", "modal");
+        }
+        /// <summary>
+        /// Добавляет атрибуты закрытия уведомления [alert] (в котором расположена кнопка)
+        /// </summary>
+        public ButtonAttributeSettings CloseAlert()
+        {
+            return AddValue("data-bs-dismiss", "alert");
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public ButtonAttributeSettings AccordionItemHeader(string id, bool isActive = false)
+        {
+            return AddValue("data-bs-toggle", "collapse")
+                .AddValue("data-bs-target", $"#{id}")
+                .AddValue("aria-expanded", isActive.ToString())
+                .AddValue("aria-controls", id);
         }
     }
 }

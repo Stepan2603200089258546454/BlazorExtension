@@ -1,5 +1,9 @@
-﻿using IdentityAbstractions.IdentityConstants;
+﻿using CommonComponents.Enums.Bootstraps;
+using CommonComponents.Models;
+using CommonComponents.Models.Bootstraps;
+using IdentityAbstractions.IdentityConstants;
 using IdentityAbstractions.Interfaces;
+using IdentityAbstractions.Models;
 using IdentityComponents.IdentityPages.Admins.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -21,5 +25,142 @@ namespace IdentityComponents.IdentityPages.Admins.Pages
 
         [Inject]
         public IIdentityManager Manager { get; set; }
+
+        private ModalDialogSettings ModalDialogUser = new ModalDialogSettings()
+        {
+            Id = "modalUser",
+            Backdrop = ModalDialogBackdrop.Static,
+            Position = ModalDialogPosition.Center,
+            Size = ModalDialogSize.XL,
+        };
+        private ModalDialogSettings ModalDialogRole = new ModalDialogSettings()
+        {
+            Id = "modalRole",
+            Backdrop = ModalDialogBackdrop.Static,
+            Position = ModalDialogPosition.Center,
+            Size = ModalDialogSize.XL,
+        };
+
+        private IList<ApplicationUser>? Users { get; set; }
+        private ApplicationUser? SelectedUser { get; set; }
+        private IList<SelectedModel<ApplicationRole>>? UserRoles { get; set; }
+        private IList<SelectedModel<ApplicationRole>>? AvailableUserRoles { get; set; }
+
+        private IList<ApplicationRole>? Roles { get; set; }
+        private ApplicationRole? SelectedRole { get; set; }
+
+        private bool IsLoadingUsers { get; set; } = false;
+        private bool IsSelectedUser { get; set; } = false;
+        private bool IsLoadingRoles { get; set; } = false;
+        private bool IsSelectedRole { get; set; } = false;
+
+        protected override async Task OnInitializedAsync()
+        {
+            if (RendererInfo.IsInteractive)
+            {
+                await LoadUsers();
+                await LoadRoles();
+            }
+            await base.OnInitializedAsync();
+        }
+        private async Task LoadUsers()
+        {
+            IsLoadingUsers = true;
+            Users = await Manager.GetAllUsers();
+            IsLoadingUsers = false;
+        }
+        private async Task LoadRoles()
+        {
+            IsLoadingRoles = true;
+            Roles = await Manager.GetAllRoles();
+            IsLoadingRoles = false;
+        }
+        private async Task Select(ApplicationUser user)
+        {
+            IsSelectedUser = true;
+            SelectedUser = user;
+            await UploadUserRoles();
+            IsSelectedUser = false;
+        }
+        private async Task Select(ApplicationRole role)
+        {
+            IsSelectedRole = true;
+            SelectedRole = role;
+            IsSelectedRole = false;
+        }
+        private async Task Delete(ApplicationRole role)
+        {
+            await Manager.DeleteRoleAsync(role);
+            await LoadRoles();
+        }
+
+        private async Task UploadUserRoles()
+        {
+            if (SelectedUser is not null)
+            {
+                UserRoles = (await Manager.GetUserRolesAsync(SelectedUser)).Select(x => new SelectedModel<ApplicationRole>(x)).ToList();
+                AvailableUserRoles = (await Manager.GetAvailableRolesForUserAsync(SelectedUser)).Select(x => new SelectedModel<ApplicationRole>(x)).ToList();
+            }
+        }
+
+        private ButtonSettings GetPresetDefault(ButtonStyleType styleType) => ButtonSettings.GetPresetDefault(string.Empty, styleType);
+        private ButtonSettings GetPresetOpenModal(string idModal) => ButtonSettings.GetPresetOpenModal(string.Empty, idModal);
+
+        private async Task RoleOk(bool? args)
+        {
+            if (SelectedRole == null) return;
+
+            if (args == true)
+            {
+                if (string.IsNullOrEmpty(SelectedRole.Name) == true) return;
+
+                if (string.IsNullOrEmpty(SelectedRole.Id) == true)
+                {
+                    _ = await Manager.CreateRoleAsync(SelectedRole.Name);
+                }
+                else
+                {
+                    _ = await Manager.UpdateRoleAsync(SelectedRole, SelectedRole.Name);
+                }
+                await LoadRoles();
+            }
+            else
+            {
+
+            }
+            SelectedRole = null;
+        }
+        private async Task UserOk(bool? args)
+        {
+            if (args == true)
+            {
+                if (SelectedUser is null) return;
+
+                IEnumerable<string>? deleteUserRoles = UserRoles?.Where(x => x.IsSelected).Select(x => x.Model.Name);
+                if (deleteUserRoles?.Count() > 0)
+                {
+                    await Manager.RemoveRolesFromUserAsync(SelectedUser, deleteUserRoles);
+                }
+                IEnumerable<string>? availableUserRoles = AvailableUserRoles?.Where(x => x.IsSelected).Select(x => x.Model.Name);
+                if (availableUserRoles?.Count() > 0)
+                {
+                    await Manager.AssignRolesToUserAsync(SelectedUser, availableUserRoles);
+                }
+            }
+            else
+            {
+
+            }
+            SelectedUser = null;
+            UserRoles = null;
+            AvailableUserRoles = null;
+        }
+        private void AddNewRole(MouseEventArgs args)
+        {
+            SelectedRole = new ApplicationRole()
+            {
+                Id = string.Empty,
+            };
+        }
     }
 }

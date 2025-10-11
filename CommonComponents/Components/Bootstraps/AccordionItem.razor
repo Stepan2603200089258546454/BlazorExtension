@@ -1,13 +1,16 @@
 ﻿<div class="accordion-item">
     <h2 class="accordion-header">
-        <button class="@Settings.HeaderClass"
+        @* <button class="@Settings.HeaderClass"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#@Settings.Id"
                 aria-expanded="@Settings.IsActive.ToString()" 
                 aria-controls="@Settings.Id">
             @HeaderContent
-        </button>
+        </button> *@
+        <Button Settings="Settings.buttonSettings">
+            @HeaderContent
+        </Button>
     </h2>
     <div id="@Settings.Id" class="@Settings.BodyClass" @attributes="Settings.Attributes">
         <div class="accordion-body">

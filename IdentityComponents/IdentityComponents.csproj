@@ -19,10 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.9" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CommonComponents\CommonComponents.csproj" />
     <ProjectReference Include="..\DataContext\DataContext.csproj" />
   </ItemGroup>
 

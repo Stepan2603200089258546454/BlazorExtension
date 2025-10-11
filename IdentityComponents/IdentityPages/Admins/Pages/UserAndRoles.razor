@@ -1,4 +1,248 @@
 ﻿@rendermode _renderAssigned
 
-<h3>UserAndRoles</h3>
+<PageTitle>UserAndRoles</PageTitle>
+
+<WaitInteractive>
+
+    <ModalDialog Settings="ModalDialogUser" OnResult="UserOk">
+        <HeaderContent>
+            Редактор пользователя
+        </HeaderContent>
+        <BodyContent>
+            @if (IsSelectedUser)
+            {
+                <div class="col">
+                    <div class="row">
+                        <center>
+                            Подождите, идет загрузка ...
+                        </center>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Загрузка...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (SelectedUser is not null)
+            {
+                <p>@SelectedUser.Email</p>
+
+                <hr />
+                <p><strong>Роли пользователя</strong></p>
+                @if (UserRoles?.Count() > 0)
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var role in UserRoles)
+                            {
+                                <tr>
+                                    <th>
+                                        <InputCheckbox @bind-Value="role.IsSelected" class="form-check-input" />
+                                    </th>
+                                    <td>@role.Model.Name</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Нет назначенных ролей</p>
+                }
+                <hr />
+                <p><strong>Доступные роли</strong></p>
+                @if (AvailableUserRoles?.Count() > 0)
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var role in AvailableUserRoles)
+                            {
+                                <tr>
+                                    <th>
+                                        <InputCheckbox @bind-Value="role.IsSelected" class="form-check-input" />
+                                    </th>
+                                    <td>@role.Model.Name</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>Нет доступных ролей</p>
+                }
+            }
+            else
+            {
+                <p>Нет выбранного пользователя</p>
+            }
+        </BodyContent>
+        <ButtonOkContent>Принять</ButtonOkContent>
+        <ButtonNoContent>Отклонить</ButtonNoContent>
+        <ButtonCancelContent>Закрыть</ButtonCancelContent>
+    </ModalDialog>
+
+    <ModalDialog Settings="ModalDialogRole" OnResult="RoleOk">
+        <HeaderContent>
+            Редактор роли
+        </HeaderContent>
+        <BodyContent>
+            @if (IsSelectedRole)
+            {
+                <div class="col">
+                    <div class="row">
+                        <center>
+                            Подождите, идет загрузка ...
+                        </center>
+                    </div>
+                    <div class="row">
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Загрузка...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (SelectedRole is not null)
+            {
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="SelectedRole.Id"
+                               id="SelectedRole.Id"
+                               class="form-control"
+                               placeholder="Id роли"
+                               readonly />
+                    <label for="SelectedRole.Id" class="form-label">Id роли</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="SelectedRole.Name"
+                               id="SelectedRole.Name"
+                               class="form-control"
+                               placeholder="Название роли" />
+                    <label for="SelectedRole.Name" class="form-label">Название роли</label>
+                </div>
+            }
+            else
+            {
+                <p>Нет выбранной роли</p>
+            }
+        </BodyContent>
+        <ButtonOkContent>Принять</ButtonOkContent>
+        <ButtonNoContent>Отклонить</ButtonNoContent>
+        <ButtonCancelContent>Закрыть</ButtonCancelContent>
+    </ModalDialog>
+
+    <Card>
+        <CardHeader>
+            <div class="row">
+
+                <div class="col d-flex align-items-center justify-content-start">
+                    <h3 class="m-0">Список ролей</h3>
+                </div>
+
+                <div class="col-auto d-flex align-items-center justify-content-center">
+                    <Button Settings="GetPresetOpenModal(ModalDialogRole.Id)" OnClick="AddNewRole">
+                        Новый
+                    </Button>
+                </div>
+            </div>
+        </CardHeader>
+        <CardBody>
+            @if (Roles?.Count() > 0)
+            {
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var role in Roles)
+                        {
+                            <tr>
+                                <th scope="row">@role.Id</th>
+                                <td>@role.Name</td>
+                                <td>
+                                    <Button Settings="GetPresetOpenModal(ModalDialogRole.Id)" OnClick="() => Select(role)">
+                                        Selected
+                                    </Button>
+                                    <Button Settings="GetPresetDefault(ButtonStyleType.Danger)" OnClick="() => Delete(role)">
+                                        Delete
+                                    </Button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>Нет пользователей</p>
+            }
+        </CardBody>
+    </Card>
+    <hr />
+    <Card>
+        <CardHeader>
+            <div class="row">
+
+                <div class="col d-flex align-items-center justify-content-start">
+                    <h3 class="m-0">Список пользователей</h3>
+                </div>
+            </div>
+        </CardHeader>
+        <CardBody>
+            @if (Users?.Count() > 0)
+            {
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">EmailConfirmed</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Users)
+                        {
+                            <tr>
+                                <th scope="row">@user.Id</th>
+                                <td>@user.Email</td>
+                                <td>@user.EmailConfirmed</td>
+                                <td>
+                                    <Button Settings="GetPresetOpenModal(ModalDialogUser.Id)" OnClick="() => Select(user)">
+                                        Selected
+                                    </Button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>Нет пользователей</p>
+            }
+        </CardBody>
+    </Card>
+
+</WaitInteractive>
 

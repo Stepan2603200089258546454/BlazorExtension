@@ -20,11 +20,16 @@
 
 Добро пожаловать в ваше новое приложение.
 
-<div class="mb-3">
-    <Button Settings="ButtonSettings">Custom button</Button>
-    <button class="btn btn-primary" @onclick="Invoke1">JS 1</button>
-    <button class="btn btn-primary" @onclick="Invoke2">JS 2</button>
+<div class="mb-3 mt-3">
+    <ButtonGroup Settings="ButtonGroup">
+        <Button Settings="ButtonSettings">
+            Custom button <Badge Settings="BadgeSettings">99+</Badge>
+        </Button>
+        <Button OnClick="Invoke1">JS 1</Button>
+        <Button OnClick="Invoke2">JS 2</Button>
+    </ButtonGroup>
 </div>
+
 <TabList Settings="TabListSettings">
     <HeaderContent>
         <TabListHeaderItem Settings="@TabListSettings.GetItemsSettings("test-1", true)">
@@ -63,6 +68,10 @@
     </AccordionItem>
 </Accordion>
 
+<Alert Settings="AlertSettings">
+    alert test
+</Alert>
+
 @code {
     private DeviceInfoService test;
     [Inject]
@@ -75,6 +84,7 @@
     private ButtonSettings ButtonSettings = new ButtonSettings()
     {
         Id = "test-btn",
+        StyleType = ButtonStyleType.OutlinePrimary,
         AttributeSettings = new ButtonAttributeSettings().OpenModal("modal"),
     };
     private ModalDialogSettings ModalDialogSettings = new ModalDialogSettings()
@@ -97,8 +107,21 @@
     private AccordionSettings AccordionSettings = new AccordionSettings()
     {
         Id = "test-accordion",
-        Type = AccordionType.Default,
-        CollapsedType = AccordionCollapsedType.NoCollapsed
+        StyleType = AccordionStyleType.Default,
+        CollapsedType = AccordionCollapsedType.Collapsed
+    };
+    private AlertSettings AlertSettings = new AlertSettings()
+    {
+        StyleType = AlertStyleType.Primary,
+        Dismiss = AlertDismiss.Enable
+    };
+    private BadgeSettings BadgeSettings = new BadgeSettings()
+    {
+        StyleType = BadgeStyleType.Danger,
+    };
+    private ButtonGroupSettings ButtonGroup = new ButtonGroupSettings()
+    {
+        Orientation = ButtonGroupOrientation.Horizontal,
     };
 
     protected override async Task OnInitializedAsync()
@@ -108,13 +131,13 @@
         await base.OnInitializedAsync();
     }
 
-    private async Task Invoke1()
+    private async Task Invoke1(MouseEventArgs arg)
     {
         var size = await test.GetViewportSize();
         var deviceInformation = await test.GetDeviceInfo();
         var openModal = await bootstrapHelper.OpenModal(ModalDialogSettings.Id);
     }
-    private async Task Invoke2()
+    private async Task Invoke2(MouseEventArgs arg)
     {
         var closeModal = await bootstrapHelper.CloseModal(ModalDialogSettings.Id);
     }

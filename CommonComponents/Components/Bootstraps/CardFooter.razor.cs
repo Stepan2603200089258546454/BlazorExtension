@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace CommonComponents.Components.Bootstraps
 {
-    public partial class Accordion : ComponentBase
+    public partial class CardFooter : ComponentBase
     {
         [Parameter]
-        public AccordionSettings Settings { get; set; } = new AccordionSettings();
+        public CardFooterSettings Settings { get; set; } = new CardFooterSettings();
         [Parameter]
         public RenderFragment? ChildContent { get; set; }
     }

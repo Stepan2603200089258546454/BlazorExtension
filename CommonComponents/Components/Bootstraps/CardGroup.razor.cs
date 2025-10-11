@@ -1,5 +1,4 @@
-﻿using CommonComponents.Models.Bootstraps;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace CommonComponents.Components.Bootstraps
 {
-    public partial class Accordion : ComponentBase
+    public partial class CardGroup : ComponentBase
     {
-        [Parameter]
-        public AccordionSettings Settings { get; set; } = new AccordionSettings();
         [Parameter]
         public RenderFragment? ChildContent { get; set; }
     }

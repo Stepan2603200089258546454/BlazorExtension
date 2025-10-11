@@ -11,6 +11,11 @@ namespace CommonComponents.Components.Bootstraps
     public partial class ModalDialog : ComponentBase
     {
         /// <summary>
+        /// Настройки модального окна
+        /// </summary>
+        [Parameter, EditorRequired]
+        public ModalDialogSettings Settings { get; set; }
+        /// <summary>
         /// Содержимое заголовка модального окна
         /// </summary>
         [Parameter]
@@ -35,11 +40,6 @@ namespace CommonComponents.Components.Bootstraps
         /// </summary>
         [Parameter]
         public RenderFragment? ButtonCancelContent { get; set; }
-        /// <summary>
-        /// Настройки модального окна
-        /// </summary>
-        [Parameter, EditorRequired]
-        public ModalDialogSettings Settings { get; set; }
         /// <summary>
         /// Нажата кнопка [Подтверждения=true, Отказа=false, Закрытия=null]
         /// </summary>

@@ -7,9 +7,13 @@
         /// </summary>
         public bool IsActive { get; set; } = false;
         /// <summary>
+        /// Отключена
+        /// </summary>
+        public bool IsDisabled { get; set; } = false;
+        /// <summary>
         /// Итоговый класс вкладки
         /// </summary>
-        public string HeaderClass => $"nav-link {(IsActive ? "active" : string.Empty)}".Trim();
+        public string HeaderClass => $"nav-link {(IsActive ? "active" : string.Empty)} {(IsDisabled ? "disabled" : string.Empty)}".Trim();
         /// <summary>
         /// id вкладки
         /// </summary>

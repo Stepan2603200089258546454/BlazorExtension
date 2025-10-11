@@ -43,7 +43,6 @@ namespace DataContext.IdentityServices
         {
             return await _userManager.FindByEmailAsync(email);
         }
-
         /// <summary>
         /// Обновление пользователя
         /// </summary>
@@ -52,7 +51,6 @@ namespace DataContext.IdentityServices
             IdentityResult result = await _userManager.UpdateAsync(user);
             return result.Succeeded;
         }
-
         /// <summary>
         /// Удаление пользователя
         /// </summary>
@@ -71,7 +69,6 @@ namespace DataContext.IdentityServices
             IdentityResult result = await _userManager.DeleteAsync(user);
             return result.Succeeded;
         }
-
         /// <summary>
         /// Блокировка пользователя
         /// </summary>
@@ -91,7 +88,6 @@ namespace DataContext.IdentityServices
             IdentityResult result = await _userManager.SetLockoutEndDateAsync(user, lockoutEnd);
             return result.Succeeded;
         }
-
         /// <summary>
         /// Разблокировка пользователя
         /// </summary>
@@ -111,7 +107,6 @@ namespace DataContext.IdentityServices
             IdentityResult result = await _userManager.SetLockoutEndDateAsync(user, null);
             return result.Succeeded;
         }
-
         /// <summary>
         /// Проверка, заблокирован ли пользователь
         /// </summary>
@@ -130,13 +125,12 @@ namespace DataContext.IdentityServices
         {
             return await _userManager.IsLockedOutAsync(user);
         }
-
         /// <summary>
         /// Получение всех пользователей
         /// </summary>
         public async Task<IList<ApplicationUser>> GetAllUsers(CancellationToken cancellationToken = default)
         {
-            return await _userManager.Users.ToListAsync(cancellationToken);
+            return await _userManager.Users.ToListAsync(cancellationToken) ?? new List<ApplicationUser>();
         }
         /// <summary>
         /// Получение пользователей постранично
@@ -149,7 +143,6 @@ namespace DataContext.IdentityServices
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
         }
-
         /// <summary>
         /// Получение всех заблокированных пользователей
         /// </summary>
@@ -171,26 +164,25 @@ namespace DataContext.IdentityServices
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
         }
-
         /// <summary>
         /// Получение ролей пользователя
         /// </summary>
-        public async Task<IList<string>> GetUserRolesAsync(string userId)
+        public async Task<IList<ApplicationRole>> GetUserRolesAsync(string userId)
         {
             ApplicationUser? user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                return new List<string>();
+                return new List<ApplicationRole>();
 
             return await GetUserRolesAsync(user);
         }
         /// <summary>
         /// Получение ролей пользователя
         /// </summary>
-        public async Task<IList<string>> GetUserRolesAsync(ApplicationUser user)
+        public async Task<IList<ApplicationRole>> GetUserRolesAsync(ApplicationUser user)
         {
-            return await _userManager.GetRolesAsync(user);
+            var userRolesNames = await _userManager.GetRolesAsync(user);
+            return await _roleManager.Roles.Where(x => userRolesNames.Contains(x.Name)).ToListAsync();
         }
-
         /// <summary>
         /// Проверка наличия роли у пользователя
         /// </summary>
@@ -210,8 +202,14 @@ namespace DataContext.IdentityServices
             ApplicationUser? user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return false;
-            //return IdentityResult.Failed(new IdentityError { Description = "User not found" });
 
+            return await AssignRolesToUserAsync(user, rolesName);
+        }
+        /// <summary>
+        /// Назначение роли пользователю
+        /// </summary>
+        public async Task<bool> AssignRolesToUserAsync(ApplicationUser user, IEnumerable<string> rolesName)
+        {
             IdentityResult result = await _userManager.AddToRolesAsync(user, rolesName);
             return result.Succeeded;
         }
@@ -223,12 +221,17 @@ namespace DataContext.IdentityServices
             ApplicationUser? user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return false;
-            //return IdentityResult.Failed(new IdentityError { Description = "User not found" });
 
+            return await RemoveRolesFromUserAsync(user, rolesName);
+        }
+        /// <summary>
+        /// Удаление роли у пользователя
+        /// </summary>
+        public async Task<bool> RemoveRolesFromUserAsync(ApplicationUser user, IEnumerable<string> rolesName)
+        {
             IdentityResult result = await _userManager.RemoveFromRolesAsync(user, rolesName);
             return result.Succeeded;
         }
-
         /// <summary>
         /// Создание роли
         /// </summary>
@@ -238,7 +241,6 @@ namespace DataContext.IdentityServices
             IdentityResult result = await _roleManager.CreateAsync(role);
             return result.Succeeded;
         }
-        
         /// <summary>
         /// Удаление роли
         /// </summary>
@@ -258,13 +260,12 @@ namespace DataContext.IdentityServices
             IdentityResult result = await _roleManager.DeleteAsync(role);
             return result.Succeeded;
         }
-
         /// <summary>
         /// Получение всех ролей
         /// </summary>
         public async Task<IList<ApplicationRole>> GetAllRoles(CancellationToken cancellationToken = default)
         {
-            return await _roleManager.Roles.ToListAsync(cancellationToken);
+            return await _roleManager.Roles.ToListAsync(cancellationToken) ?? new List<ApplicationRole>();
         }
         /// <summary>
         /// Получение ролей постранично
@@ -277,7 +278,6 @@ namespace DataContext.IdentityServices
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
         }
-
         /// <summary>
         /// Получение свободных ролей для пользователя
         /// </summary>
@@ -308,11 +308,11 @@ namespace DataContext.IdentityServices
                 IList<ApplicationRole> allRoles = await GetAllRoles(cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 // Получаем роли пользователя
-                IList<string> userRoles = await GetUserRolesAsync(user);
+                IList<ApplicationRole> userRoles = await GetUserRolesAsync(user);
                 cancellationToken.ThrowIfCancellationRequested();
                 // Исключаем роли, которые уже есть у пользователя
                 List<ApplicationRole> availableRoles = allRoles
-                    .Where(role => userRoles.Contains(role.Name) == false)
+                    .Where(role => userRoles.Any(x => x.Name == role.Name) == false)
                     .ToList();
                 return availableRoles;
             }
@@ -320,6 +320,28 @@ namespace DataContext.IdentityServices
             {
                 return new List<ApplicationRole>();
             }
+        }
+        /// <summary>
+        /// Обновить название роли
+        /// </summary>
+        public async Task<bool> UpdateRoleAsync(string roleId, string roleName)
+        {
+            ApplicationRole? findRole = await _roleManager.FindByIdAsync(roleId);
+            if (findRole == null) 
+                return false;
+
+            return await UpdateRoleAsync(findRole, roleName);
+        }
+        /// <summary>
+        /// Обновить название роли
+        /// </summary>
+        public async Task<bool> UpdateRoleAsync(ApplicationRole role, string roleName)
+        {
+            IdentityResult setNameResult = await _roleManager.SetRoleNameAsync(role, roleName);
+            if (setNameResult.Succeeded == false) 
+                return false;
+            IdentityResult result = await _roleManager.UpdateAsync(role);
+            return result.Succeeded;
         }
     }
 }
