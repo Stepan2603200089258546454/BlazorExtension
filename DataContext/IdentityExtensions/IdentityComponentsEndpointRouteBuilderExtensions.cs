@@ -32,13 +32,19 @@ namespace DataContext.IdentityExtensions
         }
         private static void MapIdentityAccountEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapPost(IdentityConst.IdentityRoute.Account.PerformExternalLogin, PerformExternalLogin);
-            endpoints.MapPost(IdentityConst.IdentityRoute.Account.Logout, Logout);
+            endpoints.MapPost(IdentityConst.IdentityRoute.Account.PerformExternalLogin, PerformExternalLogin)
+                .ExcludeFromDescription(); 
+            endpoints.MapPost(IdentityConst.IdentityRoute.Account.Logout, Logout)
+                .ExcludeFromDescription();
         }
         private static void MapIdentityAccountManageEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapPost(IdentityConst.IdentityRoute.AccountManage.LinkExternalLogin, LinkExternalLogin).RequireAuthorization();
-            endpoints.MapPost(IdentityConst.IdentityRoute.AccountManage.DownloadPersonalData, DownloadPersonalData).RequireAuthorization();
+            endpoints.MapPost(IdentityConst.IdentityRoute.AccountManage.LinkExternalLogin, LinkExternalLogin)
+                .RequireAuthorization()
+                .ExcludeFromDescription();
+            endpoints.MapPost(IdentityConst.IdentityRoute.AccountManage.DownloadPersonalData, DownloadPersonalData)
+                .RequireAuthorization()
+                .ExcludeFromDescription();
         }
         private static IResult PerformExternalLogin(HttpContext context, [FromServices] SignInManager<ApplicationUser> signInManager, [FromForm] string provider, [FromForm] string returnUrl)
         {
@@ -62,7 +68,7 @@ namespace DataContext.IdentityExtensions
         private static async Task<IResult> LinkExternalLogin(HttpContext context, [FromServices] SignInManager<ApplicationUser> signInManager, [FromForm] string provider)
         {
             // Очистите существующий внешний cookie-файл, чтобы обеспечить чистый процесс входа в систему
-            await context.SignOutAsync(Microsoft.AspNetCore.Identity.IdentityConstants.ExternalScheme);
+            await context.SignOutAsync(IdentityConstants.ExternalScheme);
 
             string redirectUrl = UriHelper.BuildRelative(
                 context.Request.PathBase,

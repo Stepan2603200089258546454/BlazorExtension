@@ -19,7 +19,7 @@ namespace IdentityComponents.IdentityPages.Admins.Pages
     [Authorize]
     [Layout(typeof(AdminLayout))]
     [Route(IdentityConst.IdentityRoute.Admins.UserAndRoleEditor)]
-    public partial class UserAndRoles : ComponentBase
+    public partial class UserAndRoles : ComponentBase, IDisposable
     {
         private static IComponentRenderMode _renderAssigned = RenderMode.InteractiveServer;
 
@@ -40,6 +40,14 @@ namespace IdentityComponents.IdentityPages.Admins.Pages
             Position = ModalDialogPosition.Center,
             Size = ModalDialogSize.XL,
         };
+        private AccordionSettings accordionSettings = new AccordionSettings()
+        {
+            Id = "accordion-user-roles",
+            AddClass = "mb-0",
+            StyleType = AccordionStyleType.Default,
+            CollapsedType = AccordionCollapsedType.NoCollapsed,
+        };
+
 
         private IList<ApplicationUser>? Users { get; set; }
         private ApplicationUser? SelectedUser { get; set; }
@@ -54,6 +62,9 @@ namespace IdentityComponents.IdentityPages.Admins.Pages
         private bool IsLoadingRoles { get; set; } = false;
         private bool IsSelectedRole { get; set; } = false;
 
+        private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
+        private CancellationToken cancelToken => cancelTokenSource.Token;
+
         protected override async Task OnInitializedAsync()
         {
             if (RendererInfo.IsInteractive)
@@ -66,13 +77,13 @@ namespace IdentityComponents.IdentityPages.Admins.Pages
         private async Task LoadUsers()
         {
             IsLoadingUsers = true;
-            Users = await Manager.GetAllUsers();
+            Users = await Manager.GetAllUsers(cancelToken);
             IsLoadingUsers = false;
         }
         private async Task LoadRoles()
         {
             IsLoadingRoles = true;
-            Roles = await Manager.GetAllRoles();
+            Roles = await Manager.GetAllRoles(cancelToken);
             IsLoadingRoles = false;
         }
         private async Task Select(ApplicationUser user)
@@ -82,7 +93,7 @@ namespace IdentityComponents.IdentityPages.Admins.Pages
             await UploadUserRoles();
             IsSelectedUser = false;
         }
-        private async Task Select(ApplicationRole role)
+        private void Select(ApplicationRole role)
         {
             IsSelectedRole = true;
             SelectedRole = role;
@@ -93,13 +104,21 @@ namespace IdentityComponents.IdentityPages.Admins.Pages
             await Manager.DeleteRoleAsync(role);
             await LoadRoles();
         }
-
         private async Task UploadUserRoles()
         {
             if (SelectedUser is not null)
             {
-                UserRoles = (await Manager.GetUserRolesAsync(SelectedUser)).Select(x => new SelectedModel<ApplicationRole>(x)).ToList();
-                AvailableUserRoles = (await Manager.GetAvailableRolesForUserAsync(SelectedUser)).Select(x => new SelectedModel<ApplicationRole>(x)).ToList();
+                UserRoles = (await Manager.GetUserRolesAsync(SelectedUser, cancelToken))
+                    .Select(x => new SelectedModel<ApplicationRole>(x))
+                    .ToList();
+                AvailableUserRoles = (await Manager.GetAvailableRolesForUserAsync(SelectedUser, cancelToken))
+                    .Select(x => new SelectedModel<ApplicationRole>(x))
+                    .ToList();
+            }
+            else
+            {
+                UserRoles = null;
+                AvailableUserRoles = null;
             }
         }
 
@@ -161,6 +180,36 @@ namespace IdentityComponents.IdentityPages.Admins.Pages
             {
                 Id = string.Empty,
             };
+        }
+
+        private bool _disposed = false;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                // Удалить управляемое состояние (управляемые объекты).
+                cancelTokenSource?.Cancel();
+                cancelTokenSource?.Dispose();
+
+                Users = null;
+                SelectedUser = null;
+                UserRoles = null;
+                AvailableUserRoles = null;
+                Roles = null;
+                SelectedRole = null;
+            }
+
+            // Бесплатные неуправляемые ресурсы.
+            _disposed = true;
+        }
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+            GC.Collect();
+            // GC.SuppressFinalize(this);
         }
     }
 }

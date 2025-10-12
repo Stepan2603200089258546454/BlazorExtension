@@ -167,21 +167,21 @@ namespace DataContext.IdentityServices
         /// <summary>
         /// Получение ролей пользователя
         /// </summary>
-        public async Task<IList<ApplicationRole>> GetUserRolesAsync(string userId)
+        public async Task<IList<ApplicationRole>> GetUserRolesAsync(string userId, CancellationToken cancellationToken = default)
         {
             ApplicationUser? user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return new List<ApplicationRole>();
 
-            return await GetUserRolesAsync(user);
+            return await GetUserRolesAsync(user, cancellationToken);
         }
         /// <summary>
         /// Получение ролей пользователя
         /// </summary>
-        public async Task<IList<ApplicationRole>> GetUserRolesAsync(ApplicationUser user)
+        public async Task<IList<ApplicationRole>> GetUserRolesAsync(ApplicationUser user, CancellationToken cancellationToken = default)
         {
-            var userRolesNames = await _userManager.GetRolesAsync(user);
-            return await _roleManager.Roles.Where(x => userRolesNames.Contains(x.Name)).ToListAsync();
+            IList<string> userRolesNames = await _userManager.GetRolesAsync(user);
+            return await _roleManager.Roles.Where(x => userRolesNames.Contains(x.Name)).ToListAsync(cancellationToken) ?? new List<ApplicationRole>();
         }
         /// <summary>
         /// Проверка наличия роли у пользователя

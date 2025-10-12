@@ -20,9 +20,13 @@ namespace CommonComponents.Models.Bootstraps
         /// </summary>
         public AccordionCollapsedType CollapsedType { get; set; } = AccordionCollapsedType.Collapsed;
         /// <summary>
+        /// Произвольные стили
+        /// </summary>
+        public string AddClass { get; set; } = string.Empty;
+        /// <summary>
         /// Итоговые стили
         /// </summary>
-        public string Class => $"{StyleType.GetStyleValue()}".Trim();
+        public string Class => $"{StyleType.GetStyleValue()} {AddClass}".Trim();
 
         public AccordionItemSettings GetItemSettings(string id, bool isActive = false)
         {

@@ -67,11 +67,11 @@ namespace IdentityAbstractions.Interfaces
         /// <summary>
         /// Получение ролей пользователя
         /// </summary>
-        public Task<IList<ApplicationRole>> GetUserRolesAsync(string userId);
+        public Task<IList<ApplicationRole>> GetUserRolesAsync(string userId, CancellationToken cancellationToken = default);
         /// <summary>
         /// Получение ролей пользователя
         /// </summary>
-        public Task<IList<ApplicationRole>> GetUserRolesAsync(ApplicationUser user);
+        public Task<IList<ApplicationRole>> GetUserRolesAsync(ApplicationUser user, CancellationToken cancellationToken = default);
         /// <summary>
         /// Проверка наличия роли у пользователя
         /// </summary>
