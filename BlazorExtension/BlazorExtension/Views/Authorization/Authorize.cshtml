@@ -1,0 +1,22 @@
+﻿@using IdentityAbstractions.FormsModels
+@using Microsoft.Extensions.Primitives
+@model AuthorizeViewModel
+
+<div class="jumbotron">
+    <h1>Авторизация</h1>
+
+    <p class="lead text-left">Вы хотите предоставить приложению <strong>@Model.ApplicationName</strong> доступ к вашим данным? (запрашиваемые области: @Model.Scope)</p>
+
+    <form asp-controller="Authorization" asp-action="Authorize" method="post">
+        @* Передайте параметры запроса таким образом, чтобы они могли быть получены с помощью действий "Принять"/"Отклонить": *@
+        @foreach (var parameter in Context.Request.HasFormContentType ?
+            (IEnumerable<KeyValuePair<string, StringValues>>) Context.Request.Form : Context.Request.Query)
+        {
+            <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
+        }
+
+        <input class="btn btn-lg btn-success" name="submit.Accept" type="submit" value="Да" />
+        <input class="btn btn-lg btn-danger" name="submit.Deny" type="submit" value="Нет" />
+        @Html.AntiForgeryToken();
+    </form>
+</div>

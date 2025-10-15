@@ -22,9 +22,12 @@ builder.Services.AddRazorComponents()
 
 // регистрируем возможность управления контроллерами для web-api
 builder.Services.AddControllers(); //api
+builder.Services.AddControllersWithViews(); //mvc
 
 // регистрация HttpClient для WASM
 builder.Services.AddHttpClient();
+// регистрируем токены от подделок
+builder.Services.AddAntiforgery();
 
 builder.AddDataBase();
 
@@ -74,8 +77,10 @@ app.UseResponseCompression();
 app.UseHttpsRedirection();
 // перенаправляет на статические страницы ошибок по коду
 //app.UseStatusCodePagesWithRedirects("/StatusCode/{0}");
+app.UseStatusCodePagesWithRedirects("/Error");
 
 app.UseRouting(); //mvc
+app.UseAuthentication(); //mvc + api
 app.UseAuthorization(); //mvc + api
 app.UseAntiforgery();
 
@@ -98,6 +103,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets(); //mvc
+
 // SignalR Hub 
 //app.MapHub<TestHub>("/TestHub");
 

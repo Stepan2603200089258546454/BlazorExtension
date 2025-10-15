@@ -1,5 +1,6 @@
 ﻿@page "/Error"
 @using System.Diagnostics
+@using Microsoft.AspNetCore
 
 <PageTitle>Ошибка</PageTitle>
 
@@ -27,13 +28,39 @@
     на значение <strong>Development</strong>, и перезапустите приложение.
 </p>
 
+<div class="jumbotron">
+    <h2>Ой-ой-ой, что-то пошло совсем плохо! :(</h2>
+    <p class="lead text-left">
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <strong>@ErrorMessage</strong>
+        }
+
+        @if (!string.IsNullOrEmpty(ErrorDescription))
+        {
+            <small>@ErrorDescription</small>
+        }
+    </p>
+</div>
+
 @code{
     [CascadingParameter]
     private HttpContext? HttpContext { get; set; }
 
     private string? RequestId { get; set; }
     private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+    private string? ErrorMessage { get; set; }
+    private string? ErrorDescription { get; set; }
 
-    protected override void OnInitialized() =>
+    protected override void OnInitialized()
+    {
+        // Если ошибка возникла на сервере OpenIddict, отобразить сведения об ошибке.
+        var response = HttpContext.GetOpenIddictServerResponse();
+        if (response is not null)
+        {
+            ErrorMessage = response.Error;
+            ErrorDescription = response.ErrorDescription;
+        }
         RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+    }
 }

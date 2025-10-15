@@ -12,13 +12,13 @@
     <ProjectReference Include="..\..\DataContext\DataContext.csproj" />
     <ProjectReference Include="..\..\IdentityComponents\IdentityComponents.csproj" />
     <ProjectReference Include="..\BlazorExtension.Client\BlazorExtension.Client.csproj" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Scalar.AspNetCore" Version="2.7.0" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.8.11" />
   </ItemGroup>
 
   <ItemGroup>

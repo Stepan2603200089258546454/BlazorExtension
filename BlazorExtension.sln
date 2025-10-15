@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityAbstractions", "Ide
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComponents", "CommonComponents\CommonComponents.csproj", "{CE45B469-DBD1-4BC8-A081-B07B43D81189}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIddictClientMVC", "OpenIddictClientMVC\OpenIddictClientMVC.csproj", "{9DCD71E2-54B3-2672-C975-1C0DF14614B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{CE45B469-DBD1-4BC8-A081-B07B43D81189}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE45B469-DBD1-4BC8-A081-B07B43D81189}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE45B469-DBD1-4BC8-A081-B07B43D81189}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DCD71E2-54B3-2672-C975-1C0DF14614B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DCD71E2-54B3-2672-C975-1C0DF14614B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DCD71E2-54B3-2672-C975-1C0DF14614B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DCD71E2-54B3-2672-C975-1C0DF14614B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

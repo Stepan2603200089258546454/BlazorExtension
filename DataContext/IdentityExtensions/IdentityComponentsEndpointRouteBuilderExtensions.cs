@@ -1,7 +1,7 @@
 ﻿using IdentityAbstractions;
 using IdentityAbstractions.IdentityConstants;
-using IdentityAbstractions.Interfaces;
 using IdentityAbstractions.Models;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
+using OpenIddict.Server.AspNetCore;
 using System.Net;
 using System.Reflection;
 using System.Security.Claims;
