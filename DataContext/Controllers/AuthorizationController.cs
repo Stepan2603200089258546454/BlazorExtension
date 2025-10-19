@@ -18,6 +18,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using static OpenIddict.Abstractions.OpenIddictConstants;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace DataContext.Controllers
 {
@@ -319,10 +320,10 @@ namespace DataContext.Controllers
             if (request.IsAuthorizationCodeGrantType())
             {
                 // Извлечь принципал утверждений, сохраненный в коде авторизации/токене обновления.
-                var result = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+                AuthenticateResult result = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
                 // Извлечь профиль пользователя, соответствующий коду авторизации/токену обновления.
-                var user = await _userManager.FindByIdAsync(result.Principal!.GetClaim(Claims.Subject)!);
+                ApplicationUser? user = await _userManager.FindByIdAsync(result.Principal!.GetClaim(Claims.Subject)!);
                 if (user is null)
                 {
                     return Forbid(
@@ -346,7 +347,7 @@ namespace DataContext.Controllers
                         }));
                 }
 
-                var identity = new ClaimsIdentity(result.Principal!.Claims,
+                ClaimsIdentity identity = new ClaimsIdentity(result.Principal!.Claims,
                     authenticationType: TokenValidationParameters.DefaultAuthenticationType,
                     nameType: Claims.Name,
                     roleType: Claims.Role);
@@ -368,11 +369,11 @@ namespace DataContext.Controllers
             if (request.IsRefreshTokenGrantType())
             {
                 // Извлечь принципал утверждений, сохраненный в коде авторизации/токене обновления.
-                var result = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+                AuthenticateResult result = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
                 // Получаем приложение которое к нам приходит
                 // Примечание: учетные данные клиента автоматически проверяются OpenIddict:
                 // если client_id или client_secret недействительны, это действие не будет вызвано.
-                var application = await _applicationManager.FindByClientIdAsync(request.ClientId!)
+                OpenIddictEntityFrameworkCoreApplication? application = await _applicationManager.FindByClientIdAsync(request.ClientId!)
                     as OpenIddictEntityFrameworkCoreApplication;
                 if (application == null)
                 {
@@ -380,7 +381,7 @@ namespace DataContext.Controllers
                 }
 
                 // Извлечь профиль пользователя, соответствующий коду авторизации/токену обновления.
-                var user = await _userManager.FindByIdAsync(result.Principal!.GetClaim(Claims.Subject)!);
+                ApplicationUser? user = await _userManager.FindByIdAsync(result.Principal!.GetClaim(Claims.Subject)!);
                 if (user is null)
                 {
                     return Forbid(
@@ -392,7 +393,7 @@ namespace DataContext.Controllers
                         }));
                 }
                 // Извлекаем авторизации для пользователя
-                var autorize = (await _authorizationManager.FindAsync(
+                IEnumerable<OpenIddictEntityFrameworkCoreAuthorization?> autorize = (await _authorizationManager.FindAsync(
                     subject: user.Id,
                     client: application.Id,
                     status: null,
@@ -423,7 +424,7 @@ namespace DataContext.Controllers
                         }));
                 }
 
-                var identity = new ClaimsIdentity(result.Principal!.Claims,
+                ClaimsIdentity identity = new ClaimsIdentity(result.Principal!.Claims,
                     authenticationType: TokenValidationParameters.DefaultAuthenticationType,
                     nameType: Claims.Name,
                     roleType: Claims.Role);
@@ -447,14 +448,15 @@ namespace DataContext.Controllers
                 // Примечание: учетные данные клиента автоматически проверяются OpenIddict:
                 // если client_id или client_secret недействительны, это действие не будет вызвано.
 
-                var application = await _applicationManager.FindByClientIdAsync(request.ClientId!);
+                OpenIddictEntityFrameworkCoreApplication? application = await _applicationManager.FindByClientIdAsync(request.ClientId!)
+                    as OpenIddictEntityFrameworkCoreApplication;
                 if (application == null)
                 {
                     throw new InvalidOperationException("Подробную информацию о заявке в базе данных найти не удалось.");
                 }
 
                 // Создайте идентификацию на основе утверждений, которая будет использоваться OpenIddict для генерации токенов.
-                var identity = new ClaimsIdentity(
+                ClaimsIdentity identity = new ClaimsIdentity(
                     authenticationType: TokenValidationParameters.DefaultAuthenticationType,
                     nameType: Claims.Name,
                     roleType: Claims.Role);
@@ -481,10 +483,10 @@ namespace DataContext.Controllers
             // Сюда придет приложение которому надо зарегистрировать пользователя
             if (request.IsPasswordGrantType())
             {
-                var user = await _userManager.FindByNameAsync(request.Username!);
+                ApplicationUser? user = await _userManager.FindByNameAsync(request.Username!);
                 if (user == null)
                 {
-                    var properties = new AuthenticationProperties(new Dictionary<string, string?>
+                    AuthenticationProperties properties = new AuthenticationProperties(new Dictionary<string, string?>
                     {
                         [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
                         [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
@@ -495,10 +497,10 @@ namespace DataContext.Controllers
                 }
 
                 // Проверьте параметры имени пользователя и пароля и убедитесь, что учетная запись не заблокирована.
-                var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password!, lockoutOnFailure: true);
+                SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, request.Password!, lockoutOnFailure: true);
                 if (!result.Succeeded)
                 {
-                    var properties = new AuthenticationProperties(new Dictionary<string, string?>
+                    AuthenticationProperties properties = new AuthenticationProperties(new Dictionary<string, string?>
                     {
                         [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
                         [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
@@ -509,7 +511,7 @@ namespace DataContext.Controllers
                 }
 
                 // Создайте идентификацию на основе утверждений, которая будет использоваться OpenIddict для генерации токенов.
-                var identity = new ClaimsIdentity(
+                ClaimsIdentity identity = new ClaimsIdentity(
                     authenticationType: TokenValidationParameters.DefaultAuthenticationType,
                     nameType: Claims.Name,
                     roleType: Claims.Role);
@@ -532,6 +534,52 @@ namespace DataContext.Controllers
             }
 
             throw new InvalidOperationException("Указанный тип гранта не поддерживается.");
+        }
+
+        [Authorize(AuthenticationSchemes = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)]
+        [HttpGet("~/connect/userinfo"), HttpPost("~/connect/userinfo"), Produces("application/json")]
+        public async Task<IActionResult> Userinfo()
+        {
+            ApplicationUser? user = await _userManager.FindByIdAsync(User.GetClaim(Claims.Subject)!);
+            if (user == null)
+            {
+                return Challenge(
+                    authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+                    properties: new AuthenticationProperties(new Dictionary<string, string?>
+                    {
+                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidToken,
+                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
+                            "Указанный токен доступа привязан к учетной записи, которая больше не существует."
+                    }));
+            }
+
+            Dictionary<string, object?> claims = new Dictionary<string, object?>(StringComparer.Ordinal)
+            {
+                // Примечание: утверждение «sub» является обязательным и должно быть включено в ответ JSON.
+                [Claims.Subject] = await _userManager.GetUserIdAsync(user)
+            };
+
+            if (User.HasScope(Scopes.Email))
+            {
+                claims[Claims.Email] = await _userManager.GetEmailAsync(user);
+                claims[Claims.EmailVerified] = await _userManager.IsEmailConfirmedAsync(user);
+            }
+
+            if (User.HasScope(Scopes.Phone))
+            {
+                claims[Claims.PhoneNumber] = await _userManager.GetPhoneNumberAsync(user);
+                claims[Claims.PhoneNumberVerified] = await _userManager.IsPhoneNumberConfirmedAsync(user);
+            }
+
+            if (User.HasScope(Scopes.Roles))
+            {
+                claims[Claims.Role] = await _userManager.GetRolesAsync(user);
+            }
+
+            // Примечание: полный список стандартных утверждений, поддерживаемых спецификацией OpenID Connect
+            // можно найти здесь: http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+
+            return Ok(claims);
         }
 
         private static IEnumerable<string> GetDestinations(Claim claim)

@@ -136,7 +136,7 @@ namespace DataContext
                     options.SetAccessTokenLifetime(TimeSpan.FromHours(1)) //время жизни основного токена (от него и пляшем в основном)
                            .SetRefreshTokenLifetime(TimeSpan.FromDays(14));
                     // Отметьте области "электронная почта", "профиль" и "роли" как поддерживаемые.
-                    options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles);
+                    options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles, Scopes.OfflineAccess);
                     // Включить нужные потоки
                     options.AllowAuthorizationCodeFlow() // Включить поток кода авторизации клиента.
                            .AllowRefreshTokenFlow() // Включить поток токен обновления клиента.

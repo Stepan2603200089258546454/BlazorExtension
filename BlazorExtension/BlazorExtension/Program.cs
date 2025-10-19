@@ -77,7 +77,7 @@ app.UseResponseCompression();
 app.UseHttpsRedirection();
 // перенаправляет на статические страницы ошибок по коду
 //app.UseStatusCodePagesWithRedirects("/StatusCode/{0}");
-app.UseStatusCodePagesWithRedirects("/Error");
+//app.UseStatusCodePagesWithRedirects("/Error");
 
 app.UseRouting(); //mvc
 app.UseAuthentication(); //mvc + api
