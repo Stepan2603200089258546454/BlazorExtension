@@ -12,7 +12,7 @@ builder.Services.AddScoped(sp =>
     {
         BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
     });
-
+//Регистрируем общие сервисы из библиотеки общих сомпонентов
 builder.Services.AddCommonServices();
 
 await builder.Build().RunAsync();

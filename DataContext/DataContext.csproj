@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
       <PrivateAssets>all</PrivateAssets>
@@ -22,22 +21,14 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.9" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-    <PackageReference Include="OpenIddict" Version="7.1.0" />
-    <PackageReference Include="OpenIddict.AspNetCore" Version="7.1.0" />
-    <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="7.1.0" />
-    <PackageReference Include="OpenIddict.Quartz" Version="7.1.0" />
-    <PackageReference Include="OpenIddict.Server.AspNetCore" Version="7.1.0" />
-    <PackageReference Include="Quartz" Version="3.15.0" />
-    <PackageReference Include="Quartz.AspNetCore" Version="3.15.0" />
-    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.15.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\IdentityAbsatractions\IdentityAbstractions.csproj" />
+    <ProjectReference Include="..\OpenIddictServer\OpenIddictServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="IdentityModels\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 

@@ -28,9 +28,9 @@ builder.Services.AddControllersWithViews(); //mvc
 builder.Services.AddHttpClient();
 // регистрируем токены от подделок
 builder.Services.AddAntiforgery();
-
+// Регистрирует ДБ и OpenIddict
 builder.AddDataBase();
-
+// Регистрируем общие сервисы из библиотеки общих сомпонентов
 builder.Services.AddCommonServices();
 
 //MS openAPI
@@ -39,8 +39,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddSignalR();
 builder.Services.AddResponseCompression(opts =>
 {
-    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-        ["application/octet-stream"]);
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes
+        .Concat(["application/octet-stream"]);
 });
 
 WebApplication app = builder.Build();
@@ -95,7 +95,7 @@ app.MapRazorComponents<App>()
         // подключение библиотеки страниц Identity
         typeof(IdentityComponents._Imports).Assembly
     );
-
+// Применить miniAPI точки для Identity 
 app.AddIdentityEndpoints();
 
 app.MapControllers(); //api

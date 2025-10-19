@@ -22,6 +22,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonComponents", "CommonC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIddictClientMVC", "OpenIddictClientMVC\OpenIddictClientMVC.csproj", "{9DCD71E2-54B3-2672-C975-1C0DF14614B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIddictServerComponents", "OpenIddictServerComponents\OpenIddictServerComponents.csproj", "{56BEB823-821D-43B4-8C4A-2B8DB35C3F30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIddictServer", "OpenIddictServer\OpenIddictServer.csproj", "{071FC863-743C-4DBF-BF68-CF7042B957EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +60,14 @@ Global
 		{9DCD71E2-54B3-2672-C975-1C0DF14614B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DCD71E2-54B3-2672-C975-1C0DF14614B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DCD71E2-54B3-2672-C975-1C0DF14614B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56BEB823-821D-43B4-8C4A-2B8DB35C3F30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56BEB823-821D-43B4-8C4A-2B8DB35C3F30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56BEB823-821D-43B4-8C4A-2B8DB35C3F30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56BEB823-821D-43B4-8C4A-2B8DB35C3F30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{071FC863-743C-4DBF-BF68-CF7042B957EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{071FC863-743C-4DBF-BF68-CF7042B957EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{071FC863-743C-4DBF-BF68-CF7042B957EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{071FC863-743C-4DBF-BF68-CF7042B957EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Routing;
 
-namespace DataContext.Helpers
+namespace OpenIddictServer.Helpers
 {
     public sealed class FormValueRequiredAttribute : ActionMethodSelectorAttribute
     {

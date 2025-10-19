@@ -11,6 +11,9 @@ namespace CommonComponents
 {
     public static class RegistrationServices
     {
+        /// <summary>
+        /// Регистрируем общие сервисы из библиотеки общих сомпонентов
+        /// </summary>
         public static void AddCommonServices(this IServiceCollection services)
         {
             services.AddScoped<BootstrapHelperService>();

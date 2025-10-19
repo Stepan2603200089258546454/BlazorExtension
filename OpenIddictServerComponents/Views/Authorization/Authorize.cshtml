@@ -1,8 +1,11 @@
-﻿@using IdentityAbstractions.FormsModels
-@using Microsoft.Extensions.Primitives
-@model AuthorizeViewModel
+﻿@model AuthorizeViewModel
+
+@{
+    ViewData["Title"] = "Авторизация";
+}
 
 <div class="jumbotron">
+
     <h1>Авторизация</h1>
 
     <p class="lead text-left">Вы хотите предоставить приложению <strong>@Model.ApplicationName</strong> доступ к вашим данным? (запрашиваемые области: @Model.Scope)</p>
@@ -17,6 +20,6 @@
 
         <input class="btn btn-lg btn-success" name="submit.Accept" type="submit" value="Да" />
         <input class="btn btn-lg btn-danger" name="submit.Deny" type="submit" value="Нет" />
-        @Html.AntiForgeryToken();
+        @Html.AntiForgeryToken()
     </form>
 </div>

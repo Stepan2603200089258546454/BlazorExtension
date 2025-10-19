@@ -1,7 +1,11 @@
-﻿@using Microsoft.Extensions.Primitives
+﻿@{
+    ViewData["Title"] = "Выйти из системы";
+}
 
 <div class="jumbotron">
+
     <h1>Выйти из системы</h1>
+
     <p class="lead text-left">Вы уверены, что хотите выйти из системы?</p>
 
     <form asp-controller="Authorization" asp-action="Logout" method="post">
@@ -13,6 +17,6 @@
         }
 
         <input class="btn btn-lg btn-success" name="Confirm" type="submit" value="Да" />
-        @Html.AntiForgeryToken();
+        @Html.AntiForgeryToken()
     </form>
 </div>

@@ -1,4 +1,4 @@
-﻿using DataContext.Helpers;
+﻿using OpenIddictServer.Helpers;
 using IdentityAbstractions.FormsModels;
 using IdentityAbstractions.Models;
 using Microsoft.AspNetCore;
@@ -20,9 +20,9 @@ using System.Threading.Tasks;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
-namespace DataContext.Controllers
+namespace OpenIddictServer.Controllers
 {
-    public class AuthorizationController : Controller
+    public class OpenIddictServerController : Controller
     {
         private readonly IOpenIddictApplicationManager _applicationManager;
         private readonly IOpenIddictAuthorizationManager _authorizationManager;
@@ -30,7 +30,7 @@ namespace DataContext.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AuthorizationController(
+        public OpenIddictServerController(
             IOpenIddictApplicationManager applicationManager,
             IOpenIddictAuthorizationManager authorizationManager,
             IOpenIddictScopeManager scopeManager,
@@ -49,7 +49,7 @@ namespace DataContext.Controllers
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> Authorize()
         {
-            var request = HttpContext.GetOpenIddictServerRequest() ??
+            OpenIddictRequest request = HttpContext.GetOpenIddictServerRequest() ??
                 throw new InvalidOperationException("Запрос OpenID Connect не может быть получен.");
 
             // Попробуйте извлечь принципала пользователя, сохраненного в файле cookie аутентификации, и перенаправить
@@ -62,7 +62,7 @@ namespace DataContext.Controllers
             //
             // Для сценариев, в которых обработчик аутентификации по умолчанию, настроенный в параметрах аутентификации ASP.NET Core
             //, здесь можно указать определенную схему.
-            var result = await HttpContext.AuthenticateAsync();
+            AuthenticateResult result = await HttpContext.AuthenticateAsync();
             if (result is not { Succeeded: true } ||
                 ((request.HasPromptValue(PromptValues.Login) || request.MaxAge is 0 ||
                  (request.MaxAge is not null && result.Properties?.IssuedUtc is not null &&
@@ -103,20 +103,23 @@ namespace DataContext.Controllers
             }
 
             // Получить профиль вошедшего в систему пользователя.
-            var user = await _userManager.GetUserAsync(result.Principal) ??
+            ApplicationUser user = await _userManager.GetUserAsync(result.Principal) ??
                 throw new InvalidOperationException("Данные пользователя не могут быть восстановлены.");
 
             // Извлекаем данные приложения из базы данных.
-            var application = await _applicationManager.FindByClientIdAsync(request.ClientId!) ??
+            OpenIddictEntityFrameworkCoreApplication application = await _applicationManager.FindByClientIdAsync(request.ClientId!)
+                as OpenIddictEntityFrameworkCoreApplication ??
                 throw new InvalidOperationException("Подробная информация о клиентском приложении для звонков не найдена.");
 
             // Извлечь постоянные авторизации, связанные с пользователем и вызывающим клиентским приложением.
-            var authorizations = await _authorizationManager.FindAsync(
+            List<OpenIddictEntityFrameworkCoreAuthorization?> authorizations = (await _authorizationManager.FindAsync(
                 subject: await _userManager.GetUserIdAsync(user),
                 client: await _applicationManager.GetIdAsync(application),
                 status: Statuses.Valid,
                 type: AuthorizationTypes.Permanent,
-                scopes: request.GetScopes()).ToListAsync();
+                scopes: request.GetScopes()).ToListAsync())
+                .Select(x => x as OpenIddictEntityFrameworkCoreAuthorization)
+                .ToList();
 
             switch (await _applicationManager.GetConsentTypeAsync(application))
             {
@@ -138,7 +141,7 @@ namespace DataContext.Controllers
                 case ConsentTypes.External when authorizations.Count is not 0:
                 case ConsentTypes.Explicit when authorizations.Count is not 0 && !request.HasPromptValue(PromptValues.Consent):
                     // Создайте идентификацию на основе утверждений, которая будет использоваться OpenIddict для генерации токенов.
-                    var identity = new ClaimsIdentity(
+                    ClaimsIdentity identity = new ClaimsIdentity(
                         authenticationType: TokenValidationParameters.DefaultAuthenticationType,
                         nameType: Claims.Name,
                         roleType: Claims.Role);
@@ -158,16 +161,16 @@ namespace DataContext.Controllers
 
                     // Автоматически создать постоянную авторизацию, чтобы избежать необходимости явного согласия
                     // для будущих запросов авторизации или токенов, содержащих те же области действия.
-                    var authorization = authorizations.LastOrDefault();
+                    OpenIddictEntityFrameworkCoreAuthorization? authorization = authorizations.LastOrDefault();
                     authorization ??= await _authorizationManager.CreateAsync(
                         identity: identity,
                         subject: await _userManager.GetUserIdAsync(user),
                         client: (await _applicationManager.GetIdAsync(application))!,
                         type: AuthorizationTypes.Permanent,
-                        scopes: identity.GetScopes());
+                        scopes: identity.GetScopes()) as OpenIddictEntityFrameworkCoreAuthorization;
 
                     identity.SetAuthorizationId(await _authorizationManager.GetIdAsync(authorization));
-                    identity.SetDestinations(GetDestinations);
+                    identity.SetDestinations(DestinationsHelpers.GetDestinations);
 
                     return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
@@ -198,24 +201,27 @@ namespace DataContext.Controllers
         [HttpPost("~/connect/authorize"), ValidateAntiForgeryToken]
         public async Task<IActionResult> Accept()
         {
-            var request = HttpContext.GetOpenIddictServerRequest() ??
+            OpenIddictRequest request = HttpContext.GetOpenIddictServerRequest() ??
                 throw new InvalidOperationException("Запрос OpenID Connect не может быть получен.");
 
             // Получить профиль вошедшего в систему пользователя.
-            var user = await _userManager.GetUserAsync(User) ??
+            ApplicationUser user = await _userManager.GetUserAsync(User) ??
                 throw new InvalidOperationException("Данные пользователя не могут быть восстановлены.");
 
             // Извлекаем данные приложения из базы данных.
-            var application = await _applicationManager.FindByClientIdAsync(request.ClientId!) ??
+            OpenIddictEntityFrameworkCoreApplication application = await _applicationManager.FindByClientIdAsync(request.ClientId!)
+                as OpenIddictEntityFrameworkCoreApplication ??
                 throw new InvalidOperationException("Подробная информация о клиентском приложении не найдена.");
 
             // Извлечь постоянные авторизации, связанные с пользователем и вызывающим клиентским приложением.
-            var authorizations = await _authorizationManager.FindAsync(
+            List<OpenIddictEntityFrameworkCoreAuthorization?> authorizations = (await _authorizationManager.FindAsync(
                 subject: await _userManager.GetUserIdAsync(user),
                 client: await _applicationManager.GetIdAsync(application),
                 status: Statuses.Valid,
                 type: AuthorizationTypes.Permanent,
-                scopes: request.GetScopes()).ToListAsync();
+                scopes: request.GetScopes()).ToListAsync())
+                .Select(x => x as OpenIddictEntityFrameworkCoreAuthorization)
+                .ToList();
 
             // Примечание: та же проверка уже выполняется в другом действии, но повторяется
             // здесь, чтобы гарантировать, что злонамеренный пользователь не сможет злоупотребить этой конечной точкой, поддерживающей только POST, и
@@ -233,7 +239,7 @@ namespace DataContext.Controllers
             }
 
             // Создайте идентификацию на основе утверждений, которая будет использоваться OpenIddict для генерации токенов.
-            var identity = new ClaimsIdentity(
+            ClaimsIdentity identity = new ClaimsIdentity(
                 authenticationType: TokenValidationParameters.DefaultAuthenticationType,
                 nameType: Claims.Name,
                 roleType: Claims.Role);
@@ -253,16 +259,16 @@ namespace DataContext.Controllers
 
             // Автоматически создать постоянную авторизацию, чтобы избежать необходимости явного согласия
             // для будущих запросов авторизации или токенов, содержащих те же области действия.
-            var authorization = authorizations.LastOrDefault();
+            OpenIddictEntityFrameworkCoreAuthorization? authorization = authorizations.LastOrDefault();
             authorization ??= await _authorizationManager.CreateAsync(
                 identity: identity,
                 subject: await _userManager.GetUserIdAsync(user),
                 client: (await _applicationManager.GetIdAsync(application))!,
                 type: AuthorizationTypes.Permanent,
-                scopes: identity.GetScopes());
+                scopes: identity.GetScopes()) as OpenIddictEntityFrameworkCoreAuthorization;
 
             identity.SetAuthorizationId(await _authorizationManager.GetIdAsync(authorization));
-            identity.SetDestinations(GetDestinations);
+            identity.SetDestinations(DestinationsHelpers.GetDestinations);
 
             // Возврат SignInResult попросит OpenIddict выдать соответствующие токены доступа/идентификации.
             return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
@@ -280,16 +286,17 @@ namespace DataContext.Controllers
         [ActionName(nameof(Logout)), HttpPost("~/connect/logout"), ValidateAntiForgeryToken]
         public async Task<IActionResult> LogoutPost()
         {
-            var request = HttpContext.GetOpenIddictServerRequest() ??
+            OpenIddictRequest request = HttpContext.GetOpenIddictServerRequest() ??
                 throw new InvalidOperationException("Запрос OpenID Connect не может быть получен.");
             // Получить профиль вошедшего в систему пользователя.
-            var user = await _userManager.GetUserAsync(User) ??
+            ApplicationUser user = await _userManager.GetUserAsync(User) ??
                 throw new InvalidOperationException("Данные пользователя не могут быть восстановлены.");
             // Извлекаем данные приложения из базы данных.
-            var application = await _applicationManager.FindByClientIdAsync(request.ClientId!) ??
+            OpenIddictEntityFrameworkCoreApplication application = await _applicationManager.FindByClientIdAsync(request.ClientId!)
+                as OpenIddictEntityFrameworkCoreApplication ??
                 throw new InvalidOperationException("Подробная информация о клиентском приложении не найдена.");
             // Отозвать авторизации, связанные с пользователем и вызывающим клиентским приложением.
-            var authorizationsCount = await _authorizationManager.RevokeAsync(
+            long authorizationsCount = await _authorizationManager.RevokeAsync(
                 subject: await _userManager.GetUserIdAsync(user),
                 client: await _applicationManager.GetIdAsync(application),
                 status: Statuses.Valid,
@@ -336,7 +343,7 @@ namespace DataContext.Controllers
                 }
 
                 // Убедитесь, что пользователю по-прежнему разрешено входить в систему.
-                if (!await _signInManager.CanSignInAsync(user))
+                if (await _signInManager.CanSignInAsync(user) == false)
                 {
                     return Forbid(
                         authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
@@ -360,7 +367,7 @@ namespace DataContext.Controllers
                         .SetClaim(Claims.PreferredUsername, await _userManager.GetUserNameAsync(user))
                         .SetClaims(Claims.Role, [.. (await _userManager.GetRolesAsync(user))]);
 
-                identity.SetDestinations(GetDestinations);
+                identity.SetDestinations(DestinationsHelpers.GetDestinations);
 
                 // Возврат SignInResult попросит OpenIddict выдать соответствующие токены доступа/идентификации.
                 return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
@@ -374,11 +381,8 @@ namespace DataContext.Controllers
                 // Примечание: учетные данные клиента автоматически проверяются OpenIddict:
                 // если client_id или client_secret недействительны, это действие не будет вызвано.
                 OpenIddictEntityFrameworkCoreApplication? application = await _applicationManager.FindByClientIdAsync(request.ClientId!)
-                    as OpenIddictEntityFrameworkCoreApplication;
-                if (application == null)
-                {
+                    as OpenIddictEntityFrameworkCoreApplication ??
                     throw new InvalidOperationException("Подробную информацию о заявке в базе данных найти не удалось.");
-                }
 
                 // Извлечь профиль пользователя, соответствующий коду авторизации/токену обновления.
                 ApplicationUser? user = await _userManager.FindByIdAsync(result.Principal!.GetClaim(Claims.Subject)!);
@@ -413,7 +417,7 @@ namespace DataContext.Controllers
                 }
 
                 // Убедитесь, что пользователю по-прежнему разрешено входить в систему.
-                if (!await _signInManager.CanSignInAsync(user))
+                if (await _signInManager.CanSignInAsync(user) == false)
                 {
                     return Forbid(
                         authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
@@ -437,7 +441,7 @@ namespace DataContext.Controllers
                         .SetClaim(Claims.PreferredUsername, await _userManager.GetUserNameAsync(user))
                         .SetClaims(Claims.Role, [.. (await _userManager.GetRolesAsync(user))]);
 
-                identity.SetDestinations(GetDestinations);
+                identity.SetDestinations(DestinationsHelpers.GetDestinations);
 
                 // Возврат SignInResult попросит OpenIddict выдать соответствующие токены доступа/идентификации.
                 return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
@@ -449,11 +453,8 @@ namespace DataContext.Controllers
                 // если client_id или client_secret недействительны, это действие не будет вызвано.
 
                 OpenIddictEntityFrameworkCoreApplication? application = await _applicationManager.FindByClientIdAsync(request.ClientId!)
-                    as OpenIddictEntityFrameworkCoreApplication;
-                if (application == null)
-                {
+                    as OpenIddictEntityFrameworkCoreApplication ??
                     throw new InvalidOperationException("Подробную информацию о заявке в базе данных найти не удалось.");
-                }
 
                 // Создайте идентификацию на основе утверждений, которая будет использоваться OpenIddict для генерации токенов.
                 ClaimsIdentity identity = new ClaimsIdentity(
@@ -476,7 +477,7 @@ namespace DataContext.Controllers
                 // Задаем список областей, предоставленных клиентскому приложению в access_token.
                 identity.SetScopes(request.GetScopes());
                 identity.SetResources(await _scopeManager.ListResourcesAsync(identity.GetScopes()).ToListAsync());
-                identity.SetDestinations(GetDestinations);
+                identity.SetDestinations(DestinationsHelpers.GetDestinations);
 
                 return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
             }
@@ -498,7 +499,7 @@ namespace DataContext.Controllers
 
                 // Проверьте параметры имени пользователя и пароля и убедитесь, что учетная запись не заблокирована.
                 SignInResult result = await _signInManager.CheckPasswordSignInAsync(user, request.Password!, lockoutOnFailure: true);
-                if (!result.Succeeded)
+                if (result.Succeeded == false)
                 {
                     AuthenticationProperties properties = new AuthenticationProperties(new Dictionary<string, string?>
                     {
@@ -527,7 +528,7 @@ namespace DataContext.Controllers
                 // но вы можете разрешить пользователю снять отметку с определенных областей.
                 // Для этого просто ограничьте список областей перед вызовом SetScopes.
                 identity.SetScopes(request.GetScopes());
-                identity.SetDestinations(GetDestinations);
+                identity.SetDestinations(DestinationsHelpers.GetDestinations);
 
                 // Возврат SignInResult попросит OpenIddict выдать соответствующие токены доступа/идентификации.
                 return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
@@ -580,52 +581,6 @@ namespace DataContext.Controllers
             // можно найти здесь: http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
 
             return Ok(claims);
-        }
-
-        private static IEnumerable<string> GetDestinations(Claim claim)
-        {
-            // Примечание: по умолчанию утверждения НЕ включаются автоматически в токены доступа и идентификации.
-            // Чтобы разрешить OpenIddict сериализовать их, необходимо прикрепить к ним назначение, которое указывает
-            // следует ли их включать в токены доступа, в токены идентификации или в оба.
-
-            switch (claim.Type)
-            {
-                case Claims.Name or Claims.PreferredUsername:
-                    yield return Destinations.AccessToken;
-
-                    if (claim.Subject!.HasScope(Scopes.Profile))
-                        yield return Destinations.IdentityToken;
-
-                    yield break;
-
-                case Claims.Name or Claims.Subject:
-                    yield return Destinations.AccessToken;
-                    yield return Destinations.IdentityToken;
-                    yield break;
-
-                case Claims.Email:
-                    yield return Destinations.AccessToken;
-
-                    if (claim.Subject!.HasScope(Scopes.Email))
-                        yield return Destinations.IdentityToken;
-
-                    yield break;
-
-                case Claims.Role:
-                    yield return Destinations.AccessToken;
-
-                    if (claim.Subject!.HasScope(Scopes.Roles))
-                        yield return Destinations.IdentityToken;
-
-                    yield break;
-
-                // Никогда не включайте штамп безопасности в токены доступа и идентификации, так как это секретное значение.
-                case "AspNet.Identity.SecurityStamp": yield break;
-
-                default:
-                    yield return Destinations.AccessToken;
-                    yield break;
-            }
         }
     }
 }
