@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using IdentityAbstractions.IdentityConstants;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenIddict.Abstractions;
@@ -66,12 +67,12 @@ namespace OpenIddictServer
                 .AddServer(options =>
                 {
                     // Включите конечную точку авторизации, выхода из системы, токен и информацию о пользователе.
-                    options.SetAuthorizationEndpointUris("connect/authorize")
-                           .SetEndSessionEndpointUris("connect/logout")
-                           .SetIntrospectionEndpointUris("connect/introspect")
-                           .SetTokenEndpointUris("connect/token")
-                           .SetUserInfoEndpointUris("connect/userinfo")
-                           .SetEndUserVerificationEndpointUris("connect/verify");
+                    options.SetAuthorizationEndpointUris(IdentityConst.IdentityRoute.OppenIddictServer.AuthorizationEndpoint)
+                           .SetEndSessionEndpointUris(IdentityConst.IdentityRoute.OppenIddictServer.EndSessionEndpoint)
+                           .SetIntrospectionEndpointUris(IdentityConst.IdentityRoute.OppenIddictServer.IntrospectionEndpoint)
+                           .SetTokenEndpointUris(IdentityConst.IdentityRoute.OppenIddictServer.TokenEndpoint)
+                           .SetUserInfoEndpointUris(IdentityConst.IdentityRoute.OppenIddictServer.UserInfoEndpoint)
+                           .SetEndUserVerificationEndpointUris(IdentityConst.IdentityRoute.OppenIddictServer.EndUserVerificationEndpoint);
                     // установить время жизни токенов
                     options.SetAccessTokenLifetime(TimeSpan.FromHours(1)) //время жизни основного токена (от него и пляшем в основном)
                            .SetRefreshTokenLifetime(TimeSpan.FromDays(14));
