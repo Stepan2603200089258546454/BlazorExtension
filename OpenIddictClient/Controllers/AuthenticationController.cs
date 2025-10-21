@@ -3,11 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 using OpenIddict.Client;
 using OpenIddict.Client.AspNetCore;
-using System.Net;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
-namespace OpenIddictClientMVC.Controllers
+namespace OpenIddictClient.Controllers
 {
     public class AuthenticationController : Controller
     {
@@ -21,10 +25,8 @@ namespace OpenIddictClientMVC.Controllers
         /// <summary>
         /// Вызывается при вызове попытки авторизоваться
         /// </summary>
-        /// <param name="returnUrl"></param>
-        /// <returns></returns>
         [HttpGet("~/login")]
-        public ActionResult LogIn(string returnUrl)
+        public IActionResult LogIn(string returnUrl)
         {
             var properties = new AuthenticationProperties
             {
@@ -40,10 +42,8 @@ namespace OpenIddictClientMVC.Controllers
         /// <summary>
         /// Вызывается при вызове выхода
         /// </summary>
-        /// <param name="returnUrl"></param>
-        /// <returns></returns>
         [HttpPost("~/logout"), ValidateAntiForgeryToken]
-        public async Task<ActionResult> LogOut(string returnUrl)
+        public async Task<IActionResult> LogOut(string returnUrl)
         {
             // Извлекает идентификатор, сохраненный в локальном файле cookie для проверки подлинности. Если он недоступен,
             // это означает, что пользователь уже вышел из системы локально (или еще не входил в систему).
@@ -80,7 +80,7 @@ namespace OpenIddictClientMVC.Controllers
         // но для пользователей, которые предпочитают использовать разные действия для каждого провайдера,
         // следующее действие можно разделить на отдельные действия.
         [HttpGet("~/callback/login/{provider}"), HttpPost("~/callback/login/{provider}"), IgnoreAntiforgeryToken]
-        public async Task<ActionResult> LogInCallback()
+        public async Task<IActionResult> LogInCallback()
         {
             // Извлекает данные авторизации, проверенные OpenIddict, как часть обработки обратного вызова.
             var result = await HttpContext.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
@@ -205,7 +205,7 @@ namespace OpenIddictClientMVC.Controllers
         // но для пользователей, которые предпочитают использовать разные действия для каждого провайдера,
         // следующее действие можно разделить на отдельные действия.
         [HttpGet("~/callback/logout/{provider}"), HttpPost("~/callback/logout/{provider}"), IgnoreAntiforgeryToken]
-        public async Task<ActionResult> LogOutCallback()
+        public async Task<IActionResult> LogOutCallback()
         {
             // Извлекает данные, сохраненные OpenIddict в токене состояния, созданном при запуске выхода из системы.
             var result = await HttpContext.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
@@ -215,7 +215,7 @@ namespace OpenIddictClientMVC.Controllers
             return Redirect(result?.Properties?.RedirectUri ?? "/");
         }
         [HttpGet("~/relogin")]
-        public async Task<ActionResult> ReLogin(string returnUrl)
+        public async Task<IActionResult> ReLogin(string returnUrl)
         {
             // Разрешайте только локальные обратные URL-адреса, чтобы предотвратить открытые атаки перенаправления.
             string redirectUrl = "~/login";
@@ -240,7 +240,7 @@ namespace OpenIddictClientMVC.Controllers
                 {
                     string? refreshToken = await HttpContext.GetTokenAsync(OpenIddictClientAspNetCoreConstants.Tokens.RefreshToken);
                     //если нет токена обновления отправляем авторизоваться
-                    if(string.IsNullOrWhiteSpace(refreshToken) == true)
+                    if (string.IsNullOrWhiteSpace(refreshToken) == true)
                     {
                         return Redirect(redirectUrl);
                     }
@@ -311,7 +311,7 @@ namespace OpenIddictClientMVC.Controllers
                                     Name = OpenIddictClientAspNetCoreConstants.Tokens.BackchannelAccessToken,
                                     Value = refreshResult.AccessToken,
                                 },
-                                new AuthenticationToken() 
+                                new AuthenticationToken()
                                 {
                                     Name = OpenIddictClientAspNetCoreConstants.Tokens.BackchannelAccessTokenExpirationDate,
                                     Value = refreshResult.AccessTokenExpirationDate?.ToString(),

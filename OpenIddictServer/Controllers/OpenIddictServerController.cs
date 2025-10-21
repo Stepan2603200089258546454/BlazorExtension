@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Abstractions;
 using OpenIddict.EntityFrameworkCore.Models;
 using OpenIddict.Server.AspNetCore;
+using OpenIddictAbstractions.Constants;
 using OpenIddictServer.Helpers;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,6 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using static OpenIddict.Abstractions.OpenIddictConstants;
-using static System.Net.Mime.MediaTypeNames;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace OpenIddictServer.Controllers
@@ -114,8 +114,8 @@ namespace OpenIddictServer.Controllers
         /// <summary>
         /// Форма согласия на предоставление данных приложению
         /// </summary>
-        [HttpGet(IdentityConst.IdentityRoute.OppenIddictServer.AuthorizationEndpoint)]
-        [HttpPost(IdentityConst.IdentityRoute.OppenIddictServer.AuthorizationEndpoint)]
+        [HttpGet(OpenIddictConst.Route.OppenIddictServer.AuthorizationEndpoint)]
+        [HttpPost(OpenIddictConst.Route.OppenIddictServer.AuthorizationEndpoint)]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> Authorize()
         {
@@ -260,7 +260,7 @@ namespace OpenIddictServer.Controllers
         /// </summary>
         [Authorize]
         [FormValueRequired("submit.Accept")]
-        [HttpPost(IdentityConst.IdentityRoute.OppenIddictServer.AuthorizationEndpoint)]
+        [HttpPost(OpenIddictConst.Route.OppenIddictServer.AuthorizationEndpoint)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Accept()
         {
@@ -326,7 +326,7 @@ namespace OpenIddictServer.Controllers
         /// </summary>
         [Authorize]
         [FormValueRequired("submit.Deny")]
-        [HttpPost(IdentityConst.IdentityRoute.OppenIddictServer.AuthorizationEndpoint)]
+        [HttpPost(OpenIddictConst.Route.OppenIddictServer.AuthorizationEndpoint)]
         [ValidateAntiForgeryToken]
         public IActionResult Deny()
         {
@@ -337,7 +337,7 @@ namespace OpenIddictServer.Controllers
         /// <summary>
         /// Форма выхода из приложения
         /// </summary>
-        [HttpGet(IdentityConst.IdentityRoute.OppenIddictServer.EndSessionEndpoint)]
+        [HttpGet(OpenIddictConst.Route.OppenIddictServer.EndSessionEndpoint)]
         public IActionResult Logout()
         {
             return View();
@@ -346,7 +346,7 @@ namespace OpenIddictServer.Controllers
         /// Согласие с формы выхода
         /// </summary>
         [ActionName(nameof(Logout))]
-        [HttpPost(IdentityConst.IdentityRoute.OppenIddictServer.EndSessionEndpoint)]
+        [HttpPost(OpenIddictConst.Route.OppenIddictServer.EndSessionEndpoint)]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogoutPost()
         {
@@ -380,7 +380,7 @@ namespace OpenIddictServer.Controllers
         /// <summary>
         /// Работа с токенами
         /// </summary>
-        [HttpPost(IdentityConst.IdentityRoute.OppenIddictServer.TokenEndpoint)]
+        [HttpPost(OpenIddictConst.Route.OppenIddictServer.TokenEndpoint)]
         [IgnoreAntiforgeryToken]
         [Produces("application/json")]
         public async Task<IActionResult> Exchange()
@@ -596,8 +596,8 @@ namespace OpenIddictServer.Controllers
         /// Приложения получают нужную информацию о пользователе
         /// </summary>
         [Authorize(AuthenticationSchemes = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)]
-        [HttpGet(IdentityConst.IdentityRoute.OppenIddictServer.UserInfoEndpoint)]
-        [HttpPost(IdentityConst.IdentityRoute.OppenIddictServer.UserInfoEndpoint)]
+        [HttpGet(OpenIddictConst.Route.OppenIddictServer.UserInfoEndpoint)]
+        [HttpPost(OpenIddictConst.Route.OppenIddictServer.UserInfoEndpoint)]
         [Produces("application/json")]
         public async Task<IActionResult> UserInfo()
         {

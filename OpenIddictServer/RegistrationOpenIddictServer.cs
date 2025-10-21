@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenIddict.Abstractions;
+using OpenIddictAbstractions.Constants;
 using OpenIddictServer.Helpers;
 using Quartz;
 using System;
@@ -19,7 +20,7 @@ namespace OpenIddictServer
         /// <summary>
         /// Зарегистрируйте наборы сущностей, необходимые OpenIddict.
         /// </summary>
-        public static DbContextOptionsBuilder UseOpenIddictServer(this DbContextOptionsBuilder builder)
+        public static DbContextOptionsBuilder UseOpenIddictModels(this DbContextOptionsBuilder builder)
         {
             // Зарегистрируйте наборы сущностей, необходимые OpenIddict.
             // Примечание: используйте универсальную перегрузку, если вам нужно
@@ -67,12 +68,12 @@ namespace OpenIddictServer
                 .AddServer(options =>
                 {
                     // Включите конечную точку авторизации, выхода из системы, токен и информацию о пользователе.
-                    options.SetAuthorizationEndpointUris(IdentityConst.IdentityRoute.OppenIddictServer.AuthorizationEndpoint)
-                           .SetEndSessionEndpointUris(IdentityConst.IdentityRoute.OppenIddictServer.EndSessionEndpoint)
-                           .SetIntrospectionEndpointUris(IdentityConst.IdentityRoute.OppenIddictServer.IntrospectionEndpoint)
-                           .SetTokenEndpointUris(IdentityConst.IdentityRoute.OppenIddictServer.TokenEndpoint)
-                           .SetUserInfoEndpointUris(IdentityConst.IdentityRoute.OppenIddictServer.UserInfoEndpoint)
-                           .SetEndUserVerificationEndpointUris(IdentityConst.IdentityRoute.OppenIddictServer.EndUserVerificationEndpoint);
+                    options.SetAuthorizationEndpointUris(OpenIddictConst.Route.OppenIddictServer.AuthorizationEndpoint)
+                           .SetEndSessionEndpointUris(OpenIddictConst.Route.OppenIddictServer.EndSessionEndpoint)
+                           .SetIntrospectionEndpointUris(OpenIddictConst.Route.OppenIddictServer.IntrospectionEndpoint)
+                           .SetTokenEndpointUris(OpenIddictConst.Route.OppenIddictServer.TokenEndpoint)
+                           .SetUserInfoEndpointUris(OpenIddictConst.Route.OppenIddictServer.UserInfoEndpoint)
+                           .SetEndUserVerificationEndpointUris(OpenIddictConst.Route.OppenIddictServer.EndUserVerificationEndpoint);
                     // установить время жизни токенов
                     options.SetAccessTokenLifetime(TimeSpan.FromHours(1)) //время жизни основного токена (от него и пляшем в основном)
                            .SetRefreshTokenLifetime(TimeSpan.FromDays(14));

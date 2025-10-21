@@ -47,15 +47,6 @@
             {
                 public const string UserAndRoleEditor = "/Identity/Admin/UserAndRoleEditor";
             }
-            public static class OppenIddictServer
-            {
-                public const string AuthorizationEndpoint = "/connect/authorize";
-                public const string EndSessionEndpoint = "/connect/logout";
-                public const string IntrospectionEndpoint = "/connect/introspect";
-                public const string TokenEndpoint = "/connect/token";
-                public const string UserInfoEndpoint = "/connect/userinfo";
-                public const string EndUserVerificationEndpoint = "/connect/verify";
-            }
         }
     }
 }

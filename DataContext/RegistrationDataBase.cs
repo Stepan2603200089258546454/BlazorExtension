@@ -82,7 +82,7 @@ namespace DataContext
                     npgsqlOptions.SetPostgresVersion(Version.Parse(version));
                 });
                 // Зарегистрируйте наборы сущностей, необходимые OpenIddict.
-                options.UseOpenIddictServer();
+                options.UseOpenIddictModels();
             });
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 using OpenIddict.Client.AspNetCore;
-using OpenIddictClientMVC.Attributes;
+using OpenIddictClient.Attributes;
 using OpenIddictClientMVC.Models;
 using Polly;
 using System.Diagnostics;
@@ -17,12 +17,10 @@ namespace OpenIddictClientMVC.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IOpenIddictTokenManager _tokenManager;
-        public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory, IOpenIddictTokenManager tokenManager)
+        public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;
-            _tokenManager = tokenManager;
         }
         [HttpGet]
         public IActionResult Index()
@@ -52,7 +50,7 @@ namespace OpenIddictClientMVC.Controllers
 
             return View(model: res);
         }
-
+        [OpenIddictAuthorize]
         public IActionResult Privacy()
         {
             return View();

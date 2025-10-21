@@ -10,7 +10,7 @@
 
     <p class="lead text-left">Вы хотите предоставить приложению <strong>@Model.ApplicationName</strong> доступ к вашим данным? (запрашиваемые области: @Model.Scope)</p>
 
-    <form asp-controller="Authorization" asp-action="Authorize" method="post">
+    <form action="@OpenIddictConst.Route.OppenIddictServer.AuthorizationEndpoint" method="post">
         @* Передайте параметры запроса таким образом, чтобы они могли быть получены с помощью действий "Принять"/"Отклонить": *@
         @foreach (var parameter in Context.Request.HasFormContentType ?
             (IEnumerable<KeyValuePair<string, StringValues>>) Context.Request.Form : Context.Request.Query)
