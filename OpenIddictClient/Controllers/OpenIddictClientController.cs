@@ -9,15 +9,16 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIddictAbstractions.Constants;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace OpenIddictClient.Controllers
 {
-    public class AuthenticationController : Controller
+    public class OpenIddictClientController : Controller
     {
         private readonly OpenIddictClientService _clientService;
 
-        public AuthenticationController(OpenIddictClientService clientService)
+        public OpenIddictClientController(OpenIddictClientService clientService)
         {
             _clientService = clientService;
         }
@@ -25,7 +26,7 @@ namespace OpenIddictClient.Controllers
         /// <summary>
         /// Вызывается при вызове попытки авторизоваться
         /// </summary>
-        [HttpGet("~/login")]
+        [HttpGet(OpenIddictConst.Route.OppenIddictClient.LoginEndpoint)]
         public IActionResult LogIn(string returnUrl)
         {
             var properties = new AuthenticationProperties
@@ -42,7 +43,7 @@ namespace OpenIddictClient.Controllers
         /// <summary>
         /// Вызывается при вызове выхода
         /// </summary>
-        [HttpPost("~/logout"), ValidateAntiForgeryToken]
+        [HttpPost(OpenIddictConst.Route.OppenIddictClient.LogoutEndpoint), ValidateAntiForgeryToken]
         public async Task<IActionResult> LogOut(string returnUrl)
         {
             // Извлекает идентификатор, сохраненный в локальном файле cookie для проверки подлинности. Если он недоступен,
@@ -79,8 +80,10 @@ namespace OpenIddictClient.Controllers
         // Примечание: этот контроллер использует одно и то же действие обратного вызова для всех провайдеров
         // но для пользователей, которые предпочитают использовать разные действия для каждого провайдера,
         // следующее действие можно разделить на отдельные действия.
-        [HttpGet("~/callback/login/{provider}"), HttpPost("~/callback/login/{provider}"), IgnoreAntiforgeryToken]
-        public async Task<IActionResult> LogInCallback()
+        [HttpGet(OpenIddictConst.Route.OppenIddictClient.CallbackLogin + "/{provider}")]
+        [HttpPost(OpenIddictConst.Route.OppenIddictClient.CallbackLogin + "/{provider}")]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> LogInCallback(string provider)
         {
             // Извлекает данные авторизации, проверенные OpenIddict, как часть обработки обратного вызова.
             var result = await HttpContext.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
@@ -204,8 +207,10 @@ namespace OpenIddictClient.Controllers
         // Примечание: этот контроллер использует одно и то же действие обратного вызова для всех провайдеров
         // но для пользователей, которые предпочитают использовать разные действия для каждого провайдера,
         // следующее действие можно разделить на отдельные действия.
-        [HttpGet("~/callback/logout/{provider}"), HttpPost("~/callback/logout/{provider}"), IgnoreAntiforgeryToken]
-        public async Task<IActionResult> LogOutCallback()
+        [HttpGet(OpenIddictConst.Route.OppenIddictClient.CallbackLogout + "/{provider}")]
+        [HttpPost(OpenIddictConst.Route.OppenIddictClient.CallbackLogout + "/{provider}")]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> LogOutCallback(string provider)
         {
             // Извлекает данные, сохраненные OpenIddict в токене состояния, созданном при запуске выхода из системы.
             var result = await HttpContext.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
@@ -214,7 +219,7 @@ namespace OpenIddictClient.Controllers
             // удалить соответствующий код из действия выхода из системы и удалить файл cookie для проверки подлинности в этом действии.
             return Redirect(result?.Properties?.RedirectUri ?? "/");
         }
-        [HttpGet("~/relogin")]
+        [HttpGet(OpenIddictConst.Route.OppenIddictClient.ReloginEndpoint)]
         public async Task<IActionResult> ReLogin(string returnUrl)
         {
             // Разрешайте только локальные обратные URL-адреса, чтобы предотвратить открытые атаки перенаправления.

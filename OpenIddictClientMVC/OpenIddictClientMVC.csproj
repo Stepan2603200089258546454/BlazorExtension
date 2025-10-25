@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OpenIddictAbstractions\OpenIddictAbstractions.csproj" />
     <ProjectReference Include="..\OpenIddictClient\OpenIddictClient.csproj" />
   </ItemGroup>
 

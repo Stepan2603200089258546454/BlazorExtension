@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIddictAbstractions.Constants;
 
 namespace OpenIddictClient.Attributes
 {
@@ -40,15 +41,14 @@ namespace OpenIddictClient.Attributes
                 }
             }
 
-            string redirectPoint = "~/relogin";
             PathString returnUrl = context.HttpContext.Request.Path;
-            string redirectUrl = $"{redirectPoint}?returnUrl={Uri.EscapeDataString(returnUrl)}";
+            string redirectUrl = $"{OpenIddictConst.Route.OppenIddictClient.ReloginEndpoint}?returnUrl={Uri.EscapeDataString(returnUrl)}";
 
             // узнать дату окончания основного токена и перенаправить на перелогирование
             string? expiresAtString = await context.HttpContext.GetTokenAsync(OpenIddictClientAspNetCoreConstants.Tokens.BackchannelAccessTokenExpirationDate);
             if (DateTime.TryParse(expiresAtString, out DateTime expiresAt))
             {
-                if (expiresAt <= DateTime.UtcNow.AddMinutes(-5)) //дата окончания меньше или равно сейчас - 5 минут (просрочка либо истечет в течении 5 минут)
+                if (expiresAt <= DateTime.Now.AddMinutes(-5)) //дата окончания меньше или равно сейчас - 5 минут (просрочка либо истечет в течении 5 минут)
                 {
                     context.Result = new RedirectResult(redirectUrl);
                 }

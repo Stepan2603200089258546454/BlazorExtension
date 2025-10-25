@@ -12,6 +12,7 @@ using OpenIddict.Abstractions;
 using OpenIddict.EntityFrameworkCore.Models;
 using OpenIddict.Server.AspNetCore;
 using OpenIddictAbstractions.Constants;
+using OpenIddictAbstractions.Models;
 using OpenIddictServer.Helpers;
 using System;
 using System.Collections.Generic;

@@ -5,6 +5,8 @@ using Microsoft.Extensions.Hosting;
 using OpenIddict.Abstractions;
 using OpenIddictAbstractions.Constants;
 using OpenIddictServer.Helpers;
+using OpenIddictServer.Interfaces;
+using OpenIddictServer.Services;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -35,6 +37,8 @@ namespace OpenIddictServer
         /// <param name="builder"></param>
         public static void AddOpenIddictServer<T>(this IHostApplicationBuilder builder) where T : DbContext
         {
+            builder.Services.AddScoped<IOpenIddictManager, OpenIddictManager>();
+
             // OpenIddict предлагает встроенную интеграцию с Quartz.NET для выполнения запланированных задач
             // (например, удаление потерянных авторизаций/токенов из базы данных) через регулярные промежутки времени.
             builder.Services.AddQuartz(options =>
@@ -250,6 +254,7 @@ namespace OpenIddictServer
                 {
                     ClientId = "resource_server_1",
                     ClientSecret = "846B62D0-DEF9-4215-A99D-86E6B8DAB342",
+                    DisplayName = "resource_server_1",
                     Permissions =
                     {
                         Permissions.Endpoints.Introspection

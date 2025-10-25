@@ -19,6 +19,14 @@ namespace OpenIddictAbstractions.Constants
                 public const string UserInfoEndpoint = "/connect/userinfo";
                 public const string EndUserVerificationEndpoint = "/connect/verify";
             }
+            public static class OppenIddictClient
+            {
+                public const string LoginEndpoint = "/authentication/login";
+                public const string LogoutEndpoint = "/authentication/logout";
+                public const string ReloginEndpoint = "/authentication/relogin";
+                public const string CallbackLogin = "/callback/login";
+                public const string CallbackLogout = "/callback/logout";
+            }
         }
     }
 }

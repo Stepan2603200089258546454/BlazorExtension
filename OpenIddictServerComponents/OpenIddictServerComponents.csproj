@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IdentityAbsatractions\IdentityAbstractions.csproj" />
     <ProjectReference Include="..\OpenIddictAbstractions\OpenIddictAbstractions.csproj" />
   </ItemGroup>
 

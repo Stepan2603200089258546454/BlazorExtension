@@ -182,6 +182,11 @@ namespace IdentityComponents.IdentityPages.Admins.Pages
             };
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
         private bool _disposed = false;
         protected virtual void Dispose(bool disposing)
         {
@@ -190,7 +195,6 @@ namespace IdentityComponents.IdentityPages.Admins.Pages
 
             if (disposing)
             {
-                // Удалить управляемое состояние (управляемые объекты).
                 cancelTokenSource?.Cancel();
                 cancelTokenSource?.Dispose();
 
@@ -202,14 +206,7 @@ namespace IdentityComponents.IdentityPages.Admins.Pages
                 SelectedRole = null;
             }
 
-            // Бесплатные неуправляемые ресурсы.
             _disposed = true;
-        }
-        void IDisposable.Dispose()
-        {
-            Dispose(true);
-            GC.Collect();
-            // GC.SuppressFinalize(this);
         }
     }
 }

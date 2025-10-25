@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenIddict.Client;
+using OpenIddictAbstractions.Constants;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -38,8 +39,8 @@ namespace OpenIddictClient
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             }).AddCookie(options =>
             {
-                options.LoginPath = "/login";
-                options.LogoutPath = "/logout";
+                options.LoginPath = OpenIddictConst.Route.OppenIddictClient.LoginEndpoint;
+                options.LogoutPath = OpenIddictConst.Route.OppenIddictClient.LogoutEndpoint;
                 //options.ExpireTimeSpan = TimeSpan.FromDays(1);
                 options.SlidingExpiration = false;
             });
@@ -110,8 +111,8 @@ namespace OpenIddictClient
                         // URI для каждого провайдера, если только все зарегистрированные провайдеры не поддерживают возврат специального параметра "iss"
                         //, содержащего их URL, как часть ответов на авторизацию. Для получения дополнительной информации
                         // смотрите https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics#section-4.4.
-                        RedirectUri = new Uri("callback/login/local", UriKind.Relative),
-                        PostLogoutRedirectUri = new Uri("callback/logout/local", UriKind.Relative)
+                        RedirectUri = new Uri(OpenIddictConst.Route.OppenIddictClient.CallbackLogin + "/local", UriKind.Relative),
+                        PostLogoutRedirectUri = new Uri(OpenIddictConst.Route.OppenIddictClient.CallbackLogout + "/local", UriKind.Relative)
                     });
                 });
 

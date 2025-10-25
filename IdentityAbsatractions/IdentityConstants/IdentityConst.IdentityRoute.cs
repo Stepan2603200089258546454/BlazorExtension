@@ -46,6 +46,7 @@
             public static class Admins
             {
                 public const string UserAndRoleEditor = "/Identity/Admin/UserAndRoleEditor";
+                public const string OpenIddictEditor = "/Identity/Admin/OpenIddictEditor";
             }
         }
     }

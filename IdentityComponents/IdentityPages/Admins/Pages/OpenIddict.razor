@@ -1,0 +1,209 @@
+﻿@rendermode _renderAssigned
+
+<PageTitle>Приложения OpenID / OAuth 2.0</PageTitle>
+
+<WaitInteractive>
+    <ModalDialog Settings="ModalDialogApp" OnResult="AppOk">
+        <HeaderContent>
+            Редактор роли
+        </HeaderContent>
+        <BodyContent>
+            @if (IsSelectedApplication)
+            {
+                <div class="col">
+                    <div class="row">
+                        <center>
+                            Подождите, идет загрузка ...
+                        </center>
+                    </div>
+                    <div class="row">
+                        <Spinner />
+                    </div>
+                </div>
+            }
+            else if (SelectedApplication is not null)
+            {
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="SelectedApplication.Id"
+                               id="SelectedApplication.Id"
+                               class="form-control"
+                               placeholder="Id приложения"
+                               readonly />
+                    <label for="SelectedApplication.Id" class="form-label">Id приложения</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="SelectedApplication.DisplayName"
+                               id="SelectedApplication.DisplayName"
+                               class="form-control"
+                               placeholder="Название приложения" />
+                    <label for="SelectedApplication.DisplayName" class="form-label">Название приложения</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="SelectedApplication.ClientId"
+                               id="SelectedApplication.ClientId"
+                               class="form-control"
+                               placeholder="Id клиента" />
+                    <label for="SelectedApplication.ClientId" class="form-label">Id клиента</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="SelectedApplication.ClientSecret"
+                               id="SelectedApplication.ClientSecret"
+                               class="form-control"
+                               placeholder="Секрет клиента" />
+                    <label for="SelectedApplication.ClientSecret" class="form-label">Секрет клиента</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="SelectedApplication.RedirectUris"
+                               id="SelectedApplication.RedirectUris"
+                               class="form-control"
+                               placeholder="Адрес переадресации" />
+                    <label for="SelectedApplication.RedirectUris" class="form-label">Адрес переадресации</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="SelectedApplication.PostLogoutRedirectUris"
+                               id="SelectedApplication.PostLogoutRedirectUris"
+                               class="form-control"
+                               placeholder="Адрес переадресации после входа" />
+                    <label for="SelectedApplication.PostLogoutRedirectUris" class="form-label">Адрес переадресации после входа</label>
+                </div>
+            }
+            else
+            {
+                <p>Нет выбранного приложения</p>
+            }
+        </BodyContent>
+        <ButtonOkContent>Принять</ButtonOkContent>
+        <ButtonNoContent>Отклонить</ButtonNoContent>
+        <ButtonCancelContent>Закрыть</ButtonCancelContent>
+    </ModalDialog>
+
+    <Card>
+        <CardHeader>
+            <div class="row">
+                <div class="col d-flex align-items-center justify-content-start">
+                    <h4 class="m-0">Список приложений</h4>
+                </div>
+                <div class="col-auto d-flex align-items-center justify-content-center">
+                    <Button Settings="GetPresetOpenModal(ModalDialogApp.Id)" OnClick="AddNewApp">
+                        Новый
+                    </Button>
+                </div>
+            </div>
+        </CardHeader>
+        <CardBody>
+            @if (IsLoadingApplications)
+            {
+                <div class="col">
+                    <div class="row">
+                        <center>
+                            Подождите, идет загрузка ...
+                        </center>
+                    </div>
+                    <div class="row">
+                        <Spinner />
+                    </div>
+                </div>
+            }
+            else if (Applications?.Count() > 0)
+            {
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">DisplayName</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var app in Applications)
+                        {
+                            <tr>
+                                <th scope="row">@app.Id</th>
+                                <td>@app.DisplayName</td>
+                                <td>
+                                    <Button Settings="GetPresetOpenModal(ModalDialogApp.Id)" OnClick="() => Select(app)">
+                                        Selected
+                                    </Button>
+                                    <Button Settings="GetPresetDefault(ButtonStyleType.Danger)" OnClick="async () => await Delete(app)">
+                                        Delete
+                                    </Button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>Нет приложений</p>
+            }
+        </CardBody>
+    </Card>
+    <hr />
+    <Card>
+        <CardHeader>
+            <div class="row">
+                <div class="col d-flex align-items-center justify-content-start">
+                    <h4 class="m-0">Список расширений</h4>
+                </div>
+                <div class="col-auto d-flex align-items-center justify-content-center">
+                    @* <Button Settings="GetPresetOpenModal(ModalDialogApp.Id)" OnClick="AddNewApp">
+                        Новый
+                    </Button> *@
+                </div>
+            </div>
+        </CardHeader>
+        <CardBody>
+            @if (IsLoadingScopes)
+            {
+                <div class="col">
+                    <div class="row">
+                        <center>
+                            Подождите, идет загрузка ...
+                        </center>
+                    </div>
+                    <div class="row">
+                        <Spinner />
+                    </div>
+                </div>
+            }
+            else if (Scopes?.Count() > 0)
+            {
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">DisplayName</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var app in Scopes)
+                        {
+                            <tr>
+                                <th scope="row">@app.Id</th>
+                                <td>@app.DisplayName</td>
+                                <td>
+                                    @* <Button Settings="GetPresetOpenModal(ModalDialogApp.Id)" OnClick="() => Select(app)">
+                                        Selected
+                                    </Button>
+                                    <Button Settings="GetPresetDefault(ButtonStyleType.Danger)" OnClick="async () => await Delete(app)">
+                                        Delete
+                                    </Button> *@
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>Нет приложений</p>
+            }
+        </CardBody>
+    </Card>
+
+</WaitInteractive>
+
