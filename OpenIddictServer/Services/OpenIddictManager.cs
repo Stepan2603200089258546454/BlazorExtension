@@ -85,12 +85,14 @@ namespace OpenIddictServer.Services
         /// <summary>
         /// Получаем создающий/обновляющий дескриптор 
         /// </summary>
-        private OpenIddictApplicationDescriptor GetAppDescriptor(CreateAppClientViewModel? model, OpenIddictEntityFrameworkCoreApplication? app)
+        private async Task<OpenIddictApplicationDescriptor> GetAppDescriptor(CreateAppClientViewModel? model, OpenIddictEntityFrameworkCoreApplication? app)
         {
             OpenIddictApplicationDescriptor napp = new OpenIddictApplicationDescriptor()
             {
                 ClientId = model?.ClientId ?? app?.ClientId,
-                ClientType = ClientTypes.Confidential,
+                ClientType =
+                    ClientTypes.Confidential, //Конфиденциально
+                    //ClientTypes.Public, //Публичный
                 ClientSecret = model?.ClientSecret ?? app?.ClientSecret,
                 ConsentType =
                     ConsentTypes.Explicit, //Явный
@@ -98,14 +100,6 @@ namespace OpenIddictServer.Services
                     //ConsentTypes.Implicit, //Скрытый
                     //ConsentTypes.Systematic, //Систематический
                 DisplayName = model?.DisplayName ?? app?.DisplayName,
-                RedirectUris =
-                {
-                    new Uri((model?.RedirectUris ?? app?.RedirectUris ?? string.Empty).Trim('"', '[', ']'))
-                },
-                PostLogoutRedirectUris =
-                {
-                    new Uri((model?.PostLogoutRedirectUris ?? app?.PostLogoutRedirectUris ?? string.Empty).Trim('"', '[', ']'))
-                },
                 Permissions =
                 {
                     Permissions.Endpoints.Authorization,
@@ -119,12 +113,26 @@ namespace OpenIddictServer.Services
                     Permissions.Scopes.Email,
                     Permissions.Scopes.Profile,
                     Permissions.Scopes.Roles,
+                    Permissions.Scopes.Address,
                 },
                 Requirements =
                 {
                     Requirements.Features.ProofKeyForCodeExchange
                 }
             };
+            
+            string redirectUrl = (model?.RedirectUris ?? app?.RedirectUris ?? string.Empty).Trim('"', '[', ']');
+            if (string.IsNullOrEmpty(redirectUrl) == false)
+                napp.RedirectUris.Add(new Uri(redirectUrl));
+            
+            string postRedirectUrl = (model?.PostLogoutRedirectUris ?? app?.PostLogoutRedirectUris ?? string.Empty).Trim('"', '[', ']');
+            if (string.IsNullOrEmpty(postRedirectUrl) == false)
+                napp.PostLogoutRedirectUris.Add(new Uri(postRedirectUrl));
+
+            // пытаемся раздать разрешения на все доп апи
+            foreach (var scope in await GetScopesAsync())
+                napp.Permissions.Add(scope.Name);
+
             return napp;
         }
         /// <summary>
@@ -135,7 +143,7 @@ namespace OpenIddictServer.Services
             if (model == null) return;
 
             OpenIddictEntityFrameworkCoreApplication? app = await FindByIdAsync(model?.Id);
-            OpenIddictApplicationDescriptor descriptor = GetAppDescriptor(model, app);
+            OpenIddictApplicationDescriptor descriptor = await GetAppDescriptor(model, app);
             
             if (app != null)
             {

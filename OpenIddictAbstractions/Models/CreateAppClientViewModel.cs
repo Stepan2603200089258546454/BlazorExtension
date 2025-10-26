@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
+﻿
 namespace OpenIddictAbstractions.Models
 {
     public class CreateAppClientViewModel
